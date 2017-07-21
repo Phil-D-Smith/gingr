@@ -1,0 +1,45 @@
+<div class="pages navbar-through toolbar-through">
+    <div data-page="login" class="page">
+
+        <!-- page-content has additional login-screen content -->
+            <div class="page-content login-screen-content">
+                <div class="login-screen-title">Gingr</div>
+                <!-- Login form -->
+                <form action="action_page.php" method="post">
+                    <div class="list-block">
+                        <ul>
+                            <li class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">Username</div>
+                                    <div class="item-input">
+                                        <input type="text" name="username" placeholder="Username">
+                                        <span class="error"> <?php echo $usernameErr;?></span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">Password</div>
+                                    <div class="item-input">
+                                        <input type="password" name="password" placeholder="Password">
+                                        <span class="error"> <?php echo $passwordErr;?></span>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="list-block">
+                        <ul>
+                            <li>
+                                <button class="item-link list-button" type="submit" name="submit" value="Sign in">Sign In</button>
+                                <br>
+                                <a href="#" class="item-link list-button">Don't have an account?</a>
+                            </li>
+                        </ul>
+                        <div class="list-block-label">Some text with login information.</div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
