@@ -11,14 +11,31 @@
                 <div class="page-content login-screen-content">
                     <div class="login-screen-title">Gingr</div>
                     <!-- Login form -->
-                    <form action="#" method="post">
+                    <form action="signup.php" method="post">
                         <div class="list-block">
                             <ul>
+                                <li class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">First Name</div>
+                                        <div class="item-input">
+                                            <input id="firstname" type="text" name="firstname" placeholder="First Name">
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">Surname</div>
+                                        <div class="item-input">
+                                            <input id="lastname" type="text" name="lastname" placeholder="Surname">
+                                        </div>
+                                    </div>
+                                </li>
                                 <li class="item-content">
                                     <div class="item-inner">
                                         <div class="item-title label">Email</div>
                                         <div class="item-input">
                                             <input id="email" type="email" name="email" placeholder="Email">
+                                            <span class="error"> <?php echo $usernameErr;?></span>
                                         </div>
                                     </div>
                                 </li>
@@ -27,6 +44,7 @@
                                         <div class="item-title label">Password</div>
                                         <div class="item-input">
                                             <input id="password" type="password" name="password" placeholder="Password">
+                                            <span class="error"> <?php echo $passwordErr;?></span>
                                         </div>
                                     </div>
                                 </li>
@@ -35,9 +53,7 @@
                         <div class="list-block">
                             <ul>
                                 <li>
-                                    <button id = "login" class="item-link list-button" type="submit" name="submit" value="login">Sign In</button>
-                                    <br>
-                                    <a href="signup.html" class="item-link list-button">Don't have an account?</a>
+                                    <button id = "signup" class="item-link list-button" type="submit" name="submit" value="signup">Sign In</button>
                                 </li>
                             </ul>
                             <div class="list-block-label">Some text with login information.</div>
