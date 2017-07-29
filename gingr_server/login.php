@@ -1,5 +1,5 @@
 <?php
-header("access-control-allow-origin: *");
+	header("access-control-allow-origin: *");
 
 
 

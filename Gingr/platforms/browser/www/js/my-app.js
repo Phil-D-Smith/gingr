@@ -17,16 +17,6 @@ $$(document).on('deviceready', function() {
 });
 
 
-myApp.onPageInit('signup', function (page) {
-    myApp.hideNavbar(navbar, isAnimated);
-});
-
-myApp.onPageInit('login', function (page) {
-    myApp.hideNavbar(navbar, isAnimated);
-
-});
-
-
 
 
 
