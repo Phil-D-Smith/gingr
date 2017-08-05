@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--
+        Customize this policy to fit your own app's needs. For more guidance, see:
+            https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
+        Some notes:
+            * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+                * Enable inline JS: add 'unsafe-inline' to default-src
+        -->
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
+
+    <!-- Required meta tags-->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <!-- Your app title -->
+    <title>My App</title>
+
+    <!-- This template defaults to the iOS CSS theme. maintain-both-ios-and-material-themes-in-single-app.html
+     -->
+    <!-- Framework stylesheets -->
+    <link rel="stylesheet" href="lib/framework7/css/framework7.ios.min.css">
+    <link rel="stylesheet" href="lib/framework7/css/framework7.ios.colors.min.css">
+    <!-- Little icons -->
+    <link rel="stylesheet" href="lib/framework7/css/framework7-icons.css">
+    <!-- My stylesheet -->
+    <link rel="stylesheet" href="css/styles.css">
+    
+</head>
+
+<body>
+    <!-- Status bar overlay for full screen mode (PhoneGap) -->
+    <div class="with-statusbar-overlay"></div>
+
+    <!-- Panels overlay-->
+    <div class="panel-overlay"></div>
+    <!-- Left panel with reveal effect-->
+    <div class="panel panel-left panel-reveal">
+
+        <div class="list-block">
+            <ul>
+                <li><a href="swipe.html" class="item-link list-button panel-close">Swipe!</a></li>
+                <li><a href="profile.html" class="item-link list-button panel-close">Profile</a></li>
+                <li><a href="preferences.html" class="item-link list-button panel-close">Preferences</a></li>
+                <li><a href="settings.html" class="item-link list-button panel-close">Settings</a></li>
+            </ul>
+        </div>
+        <div class="tabs">
+            <!-- Tab 1, active by default -->
+            <div id="tab1" class="tab active">
+                <div class="content-block">
+
+                </div>
+            </div>
+            <!-- Tab 2 -->
+            <div id="tab2" class="tab">
+                <div class="content-block">
+
+                </div>
+            </div>
+            <!-- Tab 3 -->
+            <div id="tab3" class="tab">
+                <div class="content-block">
+
+                </div>
+            </div>
+            <!-- Tab  -->
+            <div id="tab4" class="tab">
+                <div class="content-block">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Views -->
+    <div class="views">
+        <!-- Your main view, should have "view-main" class -->
+        <div class="view view-main">
+            <!-- Top Navbar-->
+            <div class="navbar">
+                <div class="navbar-inner">
+                    <div class="left">
+                        <a href="#" class="link icon-only open-panel"><i class="f7-icons">menu</i></a>
+                    </div>
+                    <div class="center">
+                        <img src="media/logo1.png" class="logo" >
+                    </div>
+                    <div class="right">
+                        <a href="chat.html" class="link icon-only"><i class="f7-icons">chat</i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pages container, because we use fixed-through navbar and toolbar, it has additional appropriate classes-->
+            <div class="pages navbar-through toolbar-through">
+                <!-- Page, "data-page" contains page name -->
+                <div data-page="index" class="page">
+                    <!-- Scrollable page content -->
+                    <div class="page-content">
+                        <div class="content-block">
+                            <a href="login.html">login</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            
+            <!-- Bottom Toolbar-->
+            <!--
+            <div class="toolbar">
+                <div class="toolbar-inner">
+                    <a href="#" class="link">Link 1</a>
+                    <a href="#" class="link">Link 2</a>
+                </div>
+            </div>
+            -->
+        </div>
+    </div>
+
+    <!--<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/md5.js" type="text/javascript"></script>-->
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>-->
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="lib/framework7/js/framework7.min.js"></script>
+    <script type="text/javascript" src="lib/jquery/jquery-3.2.1.js"></script>
+    <script type="text/javascript" src="js/my-app.js"></script>
+    <script type="text/javascript" src="js/login.js"></script>
+
+</body>
+
+</html>
