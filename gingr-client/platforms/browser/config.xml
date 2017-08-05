@@ -9,7 +9,8 @@
     </author>
     <content src="index.html" />
     <access origin="*" />
-    <access origin="http://localhost:80" />
+    <access origin="http://gingr-server.com/*" />
+    <allow-navigation href="*://*.gingr-server.com/*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <allow-intent href="tel:*" />

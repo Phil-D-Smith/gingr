@@ -3,6 +3,7 @@
 
 //custom DOM
 //var $$ = Dom7;
+console.log("script running");
 
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function() {
@@ -46,7 +47,7 @@ $$(document).on('deviceready', function() {
 
 				$.ajax({
 					type: "POST",
-					url: "localhost:80/gingr_server/signup.php",
+					url: "http://gingr-server.com/signup.php",
 					data: dataString,
 					crossDomain: true,
 					cache: false,
@@ -57,14 +58,9 @@ $$(document).on('deviceready', function() {
 					},
 
 					//display success/fail message - put something in data on server
-					success: function(data) {
-						if(data == "success") {
-							console.log("connection successful - signed up");
-						} else if(data == "exist") {
-							console.log("connection successful - user already exists");
-						} else if(data == "failed") {
-							console.log("something went wrong");
-						}
+					success: function(data, textString, xhr) {
+						console.log(data);
+						console.log(textString);
 					},
 
 					error: function(xhr, ajaxOptions, errorThrown) {
