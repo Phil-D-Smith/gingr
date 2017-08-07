@@ -7,37 +7,38 @@
 
 	require_once "config.php";
 
-	$db = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME)
+	$mysqli = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME)
   	or die('Error connecting to database');
 
-	echo "on server";
-
 	//if(isset($_POST['signup'])) {
-		$firstname = mysqli_real_escape_string($db, htmlspecialchars($_POST["firstname"]));
-		$lastname = mysqli_real_escape_string($db, htmlspecialchars($_POST["lastname"]));
-		$email = mysqli_real_escape_string($db, htmlspecialchars($_POST["email"]));
-		$password = mysqli_real_escape_string($db, htmlspecialchars($_POST["password"]));
+		$firstname = $mysqli->real_escape_string(htmlspecialchars($_POST["firstname"]));
+		$lastname = $mysqli->real_escape_string(htmlspecialchars($_POST["lastname"]));
+		$email = $mysqli->real_escape_string(htmlspecialchars($_POST["email"]));
+		$password = $mysqli->real_escape_string(htmlspecialchars($_POST["password"]));
 
-		echo "is set";
+		$passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
-		$login = mysqli_num_rows(mysqli_query($db, "SELECT * FROM user_table WHERE email = $email"));
+		$result = $mysqli->query("SELECT user_table.* FROM user_table WHERE email = '$email'");
+		echo $mysqli->error;
+
+		$login = $result->num_rows;
 		if($login != 0) {
 			echo "exist";
 		} else {
-			$date = date("y-m-d h:i:s");
-			$sql = "INSERT INTO user_table VALUES ('', $date','$fullname','$email','$password')";
+			$date = date("Y-m-d H:i:s");
+			echo $date;
+			$sql = "INSERT INTO user_table (reg_date, first_name, last_name, email, password) VALUES ('$date', '$firstname', '$lastname', '$email', '$passwordHash')";
 			
-			if (mysqli_query($db, $sql)) {
+			if ($mysqli->query($sql)) {
 				echo "Registration successful";
 			} else {
 				echo "Registration unsuccessful";
 			}
 
 		}
-		echo mysqli_error();
 	//}
 
-	mysqli_close($db);
+	$mysqli->close();
 
 ?>
 
