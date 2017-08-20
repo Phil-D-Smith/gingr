@@ -1,0 +1,71 @@
+login/signup {
+	lowercase and sanitise the email
+	sessions and session variables
+	redirect on login
+	forgot password
+	remember credentials
+	SSL
+	login with facebook
+}
+
+profile {
+	profile complete variable - if not, redirect to profile setup on login
+	create profile
+	bio
+	age
+	ginger?
+	find position
+	upload photos
+	upload photos from facebook
+}
+
+preferences {
+	age range
+	max distance
+	ginger?
+}
+
+settings {
+	notifications
+	logout
+	license/legal rubbish
+}
+
+swipe interface {
+	server loads profiles
+	display first one
+	cards design
+	yes/no button - big
+	submit decision to server
+	save decision in database, no repeat
+}
+
+matches/messaging screen {
+	template for matches list {
+		sort gingers/non-gingers
+		highlight when new messages
+		thumbnail photo
+	}
+	new database table {
+		table1: userA; userB; message_counter;
+		table2: userA; userB; date; message_number; message; from;
+	}
+	process {
+		load all messages to date at start
+		ajax poll server for new messages continuously
+			add messages to database and chat window when new
+		sent messages ajax post to server and added to database and chat window
+
+	}
+	layout and ui
+	messaging - ajax polling, increasing time with inactivity
+	notifications
+	ratchet/sockets
+}
+
+
+plugins {
+	cordova nativeStorage
+}
+	
+

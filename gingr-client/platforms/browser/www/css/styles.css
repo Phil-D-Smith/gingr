@@ -71,3 +71,19 @@ button {
 	width: 100%;
 	font-size: 1em;
 }
+
+.error-message {
+	color: red;
+	font-size: 1em;
+	margin: auto;
+	text-align: center;
+}
+
+.navbar-link {
+	height: 50px;
+}
+
+.message-sent {
+	/*Change bubble color here somehow*/
+}
+

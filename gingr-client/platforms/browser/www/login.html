@@ -6,13 +6,13 @@
 <body>
 
     <div class="pages">
-        <div data-page="login" class="page no-navbar">
+        <div data-page="login" class="page no-navbar no-toolbar">
 
             <!-- page-content has additional login-screen content -->
                 <div class="page-content login-screen-content">
                     <div class="login-screen-title"><img src="media/logo1.png" class="logo" style="height: 100px; padding-top: 20px;" ></div>
                     <!-- Login form -->
-                    <form>
+                    <div>
                         <div class="list-block">
                             <ul>
                                 <li class="item-content">
@@ -36,14 +36,15 @@
                         <div class="list-block">
                             <ul>
                                 <li>
-                                    <button id = "login" class="item-link list-button" name="login" value="login">Sign In</button>
+                                    <!--<div id="errorMessage" class="error-message label"> </div>-->
+                                    <button id="login" class="item-link list-button" name="login">Sign In</button>
                                     <br>
                                     <a href="signup.html" class="item-link list-button">Don't have an account?</a>
                                 </li>
                             </ul>
                             <div class="list-block-label">Some text with login information.</div>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
