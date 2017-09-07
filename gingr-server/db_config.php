@@ -5,7 +5,8 @@
 	define('DB_PASSWORD', '');
 	define('DB_NAME', 'test');
 
-	//create database object
-	$mysqli = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME)
-  	or die('Error connecting to database');
+	
+	//turn off error reporting because PHP appends it to the end of JSON responses like a spoon
+  	error_reporting(0);
+	@ini_set('display_errors', 0);
 ?>

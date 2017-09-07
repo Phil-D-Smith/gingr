@@ -10,7 +10,7 @@
     <content src="index.html" />
     <access origin="*" />
     <access origin="http://gingr-server.com/*" />
-	<allow-navigation href="*://*.gingr-server.com/*" />
+    <allow-navigation href="*://*.gingr-server.com/*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <allow-intent href="tel:*" />
@@ -30,4 +30,6 @@
     <plugin name="cordova-plugin-whitelist" spec="~1.2.0" />
     <plugin name="cordova-plugin-console" spec="~1.0.1" />
     <plugin name="cordova-plugin-statusbar" spec="~1.0.1" />
+    <plugin name="cordova-plugin-geolocation" spec="~2.4.3" />
+    <plugin name="phonegap-plugin-push" spec="~2.0.0" />
 </widget>

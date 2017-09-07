@@ -15,14 +15,18 @@ var mainView = myApp.addView('.view-main', {
 $$(document).on('deviceready', function() {
     console.log("Device is ready!");
 
-    //;oad login page on startup
-    mainView.router.loadPage("login.html")
+    //get position on startup - 10s timeout
+    navigator.geolocation.getCurrentPosition(onLocationSuccess, onLocationError, {timeout:10000});
+
+
+    //modify status bar
+    StatusBar.styleBlackTranslucent;
+
+    //load login page on startup
+    mainView.router.loadPage("login.html");
 
 });
 
-myApp.onPageInit('index', function(page) {
-    console.log("index loaded");
-});
 
 
 
@@ -35,21 +39,24 @@ myApp.onPageInit('profile', function(page) {
     console.log("profile loaded");
     // Do something here for "about" page
 })
-/*
-// Option 2. Using one 'pageInit' event handler for all pages:
-$$(document).on('pageInit', function (e) {
-    // Get page data from event data
-    var page = e.detail.page;
 
-    if (page.name === 'about') {
-        // Following code will be executed for page with data-page attribute equal to "about"
-        myApp.alert('Here comes About page');
-    }
-})
-*/
 
 //close panel when link pressed
 $$('.panel-close').on('click', function (e) {
     //close panel
     myApp.closePanel();
 });
+
+
+function onLocationSuccess(position) {
+    var latitude = position.coords.latitude;
+    var longitude = position.coords.longitude;
+    var accuracy = position.coords.accuracy;
+
+    console.log(latitude + " " + longitude);
+}
+
+function onLocationError(error) {
+    console.log("GPS error");
+    console.log(error.message);
+}

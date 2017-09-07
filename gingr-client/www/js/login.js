@@ -3,7 +3,6 @@
 
 //custom DOM
 //var $$ = Dom7;
-console.log("login script running");
 
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function() {
@@ -58,7 +57,7 @@ function login() {
 	var password = $("#password").val();
 
 	//create data array
-	var dataString = {email: email, password: password};
+	var dataString = {"action": "login", "email": email, "password": password};
 
 	console.log(dataString);
 
@@ -81,7 +80,7 @@ function login() {
 			type: "POST",
 			url: "http://gingr-server.com/login.php",
 			data: dataString,
-			dataType: 'JSON',
+			dataType: 'json',
 			crossDomain: true,
 			cache: false,
 
@@ -96,7 +95,6 @@ function login() {
 					localStorage.login = "true";
 					localStorage.email = email;
 					localStorage.id = data.id;
-					console.log(localStorage.id);
 					mainView.router.loadPage("swipe.html");
 				} else {
 					myApp.alert("Incorrect email or password", "Login Failed");
@@ -134,7 +132,7 @@ function signup() {
 	var password = $("#password1").val();
 
 	//create data array
-	var dataString = {firstname: firstname, lastname: lastname, email: email, password: password};
+	var dataString = {"action": "signup", "firstname": firstname, "lastname": lastname, "email": email, "password": password};
 
 	console.log(dataString);
 
@@ -161,7 +159,7 @@ function signup() {
 			type: "POST",
 			url: "http://gingr-server.com/signup.php",
 			data: dataString,
-			dataType: 'JSON',
+			dataType: 'json',
 			crossDomain: true,
 			cache: false,
 
@@ -215,5 +213,3 @@ function validateEmail(emailUT) {
     	return true;
     }
 }
-
-console.log("end of login script");

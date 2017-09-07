@@ -1,7 +1,5 @@
 login/signup {
-	lowercase and sanitise the email
 	sessions and session variables
-	redirect on login
 	forgot password
 	remember credentials
 	SSL
@@ -17,6 +15,8 @@ profile {
 	find position
 	upload photos
 	upload photos from facebook
+
+	location services
 }
 
 preferences {
@@ -32,12 +32,28 @@ settings {
 }
 
 swipe interface {
-	server loads profiles
-	display first one
-	cards design
-	yes/no button - big
-	submit decision to server
-	save decision in database, no repeat
+	process {
+		server loads qualifying profile's id, checks against "decisions" table
+		if no row exists:
+			send to client then load the rest of the profile
+			repeat a few times then send to client
+
+		cards design
+		yes/no button - big
+		submit decision to server
+		save in decisions
+	before adding to "matches" table {
+		like a user profile
+		check "decisions" table for row with targetUser = your own userID:
+			if both yes, add row to "matches"
+			if no, just add decision and do nothing
+
+		if no row exists:
+			add row to table "decisions"
+			
+		decisions db:  uid, originUser, originDecision, targetUser, targetDecision
+
+	}
 }
 
 matches/messaging screen {
@@ -46,26 +62,37 @@ matches/messaging screen {
 		highlight when new messages
 		thumbnail photo
 	}
-	new database table {
-		table1: userA; userB; message_counter;
-		table2: userA; userB; date; message_number; message; from;
-	}
 	process {
-		load all messages to date at start
-		ajax poll server for new messages continuously
-			add messages to database and chat window when new
-		sent messages ajax post to server and added to database and chat window
+		ajax poll server for new messages continuously - reducing in frequency
+			background process
+
+		check if correct conversation is loaded - then load messages.
+		else, just contunue checking
+
 
 	}
 	layout and ui
 	messaging - ajax polling, increasing time with inactivity
 	notifications
-	ratchet/sockets
+	ratchet/sockets?
 }
 
 
 plugins {
-	cordova nativeStorage
+	cordova nativeStorage to replace localStorage
+	cordova geolocation - NSLocationWhenInUseUsageDescription
+	phonegap-plugin-push
 }
 	
 
+other {
+	push notifications {
+		GCM
+		APMS
+	}
+}
+
+monetize {
+	some of the matches are adverts
+	"watch this advert for ____ bonus"
+}
