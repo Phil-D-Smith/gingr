@@ -82,14 +82,17 @@ plugins {
 	cordova nativeStorage to replace localStorage
 	cordova geolocation - NSLocationWhenInUseUsageDescription
 	phonegap-plugin-push
+	admob
 }
 	
 
 other {
 	push notifications {
-		GCM
-		APMS
+		GCM - plugin for this
+		APMS - same plugin for this
 	}
+	probably a VERY good idea to make user ids psuedo random / hashed so a random number in a cookie can't get into an account
+
 }
 
 monetize {

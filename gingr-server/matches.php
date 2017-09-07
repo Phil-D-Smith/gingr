@@ -31,7 +31,7 @@
 		$stmt = $mysqli->prepare($query);
 
 		//bind email to query and execute
-		$stmt->bind_param("ii", $originUserID, $originUserID);
+		$stmt->bind_param("ss", $originUserID, $originUserID);
 		if (!$stmt->execute()) {
 			$response = ["status" => "error"];
   			$mysqli->close();
@@ -61,7 +61,7 @@
     			//find target id and origin id, discard origin
     			if ($originUserID == $user1) {
     				$targetUserID = $user2;
-    			} else if ($originUserID == $user2) {
+    			} elseif ($originUserID == $user2) {
     				$targetUserID = $user1;
     			}
 
@@ -73,7 +73,7 @@
 				$stmt = $mysqli->prepare($query);
 
 				//bind email to query and execute
-				$stmt->bind_param("i", $targetUserID);
+				$stmt->bind_param("s", $targetUserID);
 				if (!$stmt->execute()) {
 					$response = ["status" => "error"];
   					$mysqli->close();
@@ -128,18 +128,22 @@
   			return;
   		}
 
-  		//get user preferences here
+  		//get user id and preferences here
 		$originUserID = $mysqli->real_escape_string(htmlspecialchars($_POST["id"]));
+		$minAge = $mysqli->real_escape_string(htmlspecialchars($_POST["minAge"]));
+		$maxAge = $mysqli->real_escape_string(htmlspecialchars($_POST["maxAge"]));
+		$maxDistance = $mysqli->real_escape_string(htmlspecialchars($_POST["maxDistance"]));
+		$gingerBool = $mysqli->real_escape_string(htmlspecialchars($_POST["gingerBool"]));
 
-		//find current message count for conversation
+		//get all qualifying users from db
 		$query = "	SELECT * FROM user_table
-					WHERE  age = ?";
+					WHERE  age >= ? AND age <= ? AND ginger = ?";
 
 		//prepare statement and handle error
 		$stmt = $mysqli->prepare($query);
 
 		//bind email to query and execute
-		$stmt->bind_param("ii", $originUserID, $originUserID);
+		$stmt->bind_param("s", $minAge, $maxAge, $gingerBool);
 		if (!$stmt->execute()) {
 			$response = ["status" => "error"];
   			$mysqli->close();

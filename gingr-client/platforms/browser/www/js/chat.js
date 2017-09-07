@@ -41,17 +41,18 @@ $$(document).on('deviceready', function() {
 		//get match ID passed through browser storage
 		var matchID = localStorage.matchID;
 		var matchName = localStorage.matchName;
+		var userID = localStorage.id;
 		//get all messages for that match
-		getMessages(matchID, matchName);
+		getMessages(matchID, matchName, userID);
 
 		//on touch of "send" button - sendMessage
 		$("#link").on('touchend', function(e) {
 			e.preventDefault();
 			//get match ID passed through browser storage
 			var matchID = localStorage.matchID;
-			var senderID = localStorage.id;
+			var userID = localStorage.id;
 
-			sendMessage(matchID, senderID);
+			sendMessage(matchID, userID);
 
 			console.log("send clicked");
 		}); 
@@ -147,7 +148,7 @@ function getMatches() {
 }
 
 //send a new message to target
-function sendMessage(matchID, senderID) {
+function sendMessage(matchID, userID) {
 
 	// new conversation flag off
 	var	conversationStarted = false;	
@@ -166,7 +167,7 @@ function sendMessage(matchID, senderID) {
 	//get messages here
 
 	//post request string to server
-	var dataString = {"action": "sendMessage", "matchID": matchID, "senderID": senderID, "messageBody": messageText};
+	var dataString = {"action": "sendMessage", "matchID": matchID, "senderID": userID, "messageBody": messageText};
 
 	//ajax post to get user id from email
 	$.ajax({
@@ -235,8 +236,9 @@ function sendMessage(matchID, senderID) {
 }     
 
 //get message string from db for target
-function getMessages(matchID, matchName) {
+function getMessages(matchID, matchName, userID) {
 	// new conversation flag off
+	console.log(userID);
 	console.log(matchID);
 	console.log(matchName);
 	var	conversationStarted = false;	
@@ -249,7 +251,7 @@ function getMessages(matchID, matchName) {
 
 	//get messages here
 	//make data string
-	var dataString = {"action": "getMessages", "matchID": matchID};
+	var dataString = {"action": "getMessages", "userID": userID, "matchID": matchID};
 	console.log(dataString);
 
 	//ajax post to get user id from email
@@ -343,7 +345,7 @@ function getMessages(matchID, matchName) {
 }
 
 //get message string from db for target
-function checkMessages() {
+function checkMessages(matchID) {
 	var originUserID = localStorage.id;
 	var	conversationStarted = false;	
 
@@ -369,7 +371,7 @@ function checkMessages() {
 			if (data.status == "success") {
 				//if new messages - loop through matched user data and populate list
 				if (data.newMessages) {
-					console.log("new messages avaliable");
+					console.log("new messages avaliable" + data.newMessages);
 					//if the conversation page is loaded
 					if (currentPage == "conversation") {
 						matchID = localStorage.matchID;

@@ -20,7 +20,7 @@
 		checkMessages();
 	}
 
-	//gets all messages from db for a conversation
+	//gets ALL messages from db for a conversation
 	function getMessages() {
 		//create database object
 		$mysqli = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
@@ -34,13 +34,14 @@
 
   		//escape, remove special characters, and format appropriately
   		$matchID = $mysqli->real_escape_string(htmlspecialchars($_POST["matchID"]));
+  		$originUserID = $mysqli->real_escape_string(htmlspecialchars($_POST["userID"]));
 		//for "last updated" note on messages
 		$date = date("Y-m-d H:i:s");
 
 
 
 		//find current match id and message count for conversation
-		$query = "SELECT message_count FROM message_counter WHERE match_id = ?";
+		$query = "SELECT user_id_1, user_id_2, message_count FROM message_counter WHERE match_id = ?";
 
 		//prepare statement and handle error
 		$stmt = $mysqli->prepare($query);
@@ -57,6 +58,8 @@
 		//get result
 		$result = $stmt->get_result();
 		$row = $result->fetch_assoc();
+		$userID1 = $row["user_id_1"];
+		$userID2 = $row["user_id_2"];
 		$messageCount = $row["message_count"];
 
 		//if no messages exit, else continue
@@ -67,9 +70,16 @@
 			$result->free();
 
 			//update last_seen message counter to the total message counter
-			$query = "	UPDATE message_counter
-						SET last_seen = ?
-						WHERE match_id = ?";
+			if ($originUserID === $userID1) {
+				$query = "	UPDATE message_counter
+							SET last_seen_user_1 = ?
+							WHERE match_id = ?";
+			} elseif ($originUserID === $userID2) {
+				$query = "	UPDATE message_counter
+							SET last_seen_user_2 = ?
+							WHERE match_id = ?";
+			}
+
 			//some kind of error catching here - if not - reutrn and respond with error
 			//prepare statement and handle error
 			$stmt = $mysqli->prepare($query);
@@ -160,7 +170,7 @@
 
 
 		//find current message count for that match id
-		$query = "SELECT message_count FROM message_counter WHERE match_id = ?";
+		$query = "SELECT user_id_1, user_id_2, message_count FROM message_counter WHERE match_id = ?";
 
 		//prepare statement and handle error
 		$stmt = $mysqli->prepare($query);
@@ -177,6 +187,8 @@
 		//get result
 		$result = $stmt->get_result();
 		$row = $result->fetch_assoc();
+		$userID1 = $row["user_id_1"];
+		$userID2 = $row["user_id_2"];
 		$messageCount = $row["message_count"];
 		//free memory
 		$result->free();
@@ -184,9 +196,15 @@
 		$newMessageCount = $messageCount + 1;
 		
 		//query for messageCount update to both counters (sending a message assumes you are reading them all)
-		$query = "	UPDATE message_counter
-					SET message_count = ?, last_seen = ?, last_message = ?, date_time = ?
-					WHERE match_id = ?";
+		if ($senderID === $userID1) {
+			$query = "	UPDATE message_counter
+						SET message_count = ?, last_seen_user_1 = ?, last_message = ?, date_time = ?
+						WHERE match_id = ?";
+		} elseif ($senderID === $userID2) {
+			$query = "	UPDATE message_counter
+						SET message_count = ?, last_seen_user_2 = ?, last_message = ?, date_time = ?
+						WHERE match_id = ?";
+		}
 
 		//prepare statement and handle error
 		$stmt = $mysqli->prepare($query);
@@ -205,7 +223,7 @@
 			$stmt = $mysqli->prepare($query);
 
 			//bind email to query and execute
-			$stmt->bind_param("isisi", $matchID, $dateTime, $newMessageCount, $messageBody, $senderID);
+			$stmt->bind_param("isiss", $matchID, $dateTime, $newMessageCount, $messageBody, $senderID);
 			//if successful, continue to insert new message
 			if ($stmt->execute()) {
 				$response = [	"status" => "success",
@@ -249,7 +267,7 @@
 		$stmt = $mysqli->prepare($query);
 
 		//bind email to query and execute
-		$stmt->bind_param("ii", $originUserID, $originUserID);
+		$stmt->bind_param("ss", $originUserID, $originUserID);
 		if (!$stmt->execute()) {
 			$response = ["status" => "error"];
   			$mysqli->close();
@@ -258,38 +276,29 @@
 		}
 
 		//get result and number of matches for that user
-		$result = $stmt->get_result();
-		$numMatches = $result->num_rows;
-		$result->free();
+		$matchResult = $stmt->get_result();
+		$numMatches = $matchResult->num_rows;
 
 		//array of arrays of message data
 		$allMatchMessages = [];
 		$newMessages = 0;
 
 		//loop through and check new messages for all matches
-		for($i = 1; $i <= $numMatches; $i++) {
-			//find current match id and message count for conversation
-			$query = "SELECT message_count, last_seen FROM message_counter WHERE match_id = ?";
+		$i =0;
+		while($matchRow = $matchResult->fetch_assoc()) {
+			$matchID = (int)$matchRow["match_id"];
+			$userID1 = $matchRow["user_id_1"];
+			$userID2 = $matchRow["user_id_2"];
+			$currentMessageCount = (int)$matchRow["message_count"];
+			$lastSeen1 = (int)$matchRow["last_seen_user_1"];
+			$lastSeen2 = (int)$matchRow["last_seen_user_2"];
 
-			//prepare statement and handle error
-			$stmt = $mysqli->prepare($query);
-
-			//bind email to query and execute
-			$stmt->bind_param("i", $i);
-			if (!$stmt->execute()) {
-				$response = ["status" => "error"];
-  				$mysqli->close();
-  				echo json_encode($response);
-  				return;
+			//find the last seen message for the client user
+			if ($originUserID === $userID1) {
+				$lastMessageCount = $lastSeen1;
+			} elseif ($originUserID === $userID2) {
+				$lastMessageCount = $lastSeen2;
 			}
-
-			//get result and number of matches for that user
-			$result = $stmt->get_result();
-			$row = $result->fetch_assoc();
-			$currentMessageCount = (int)$row["message_count"];
-			$lastMessageCount = (int)$row["last_seen"];
-			//free memory
-			$result->free();
 
 			//if new messages - get them, else - skip
 			if ($currentMessageCount > $lastMessageCount) {
@@ -342,11 +351,13 @@
 				$result->free();
 
 				//put each message set into array for each user
-				$allMatchMessages[$i-1] = $allMessages;
+				$allMatchMessages[$i] = $allMessages;
 
 			} elseif ($currentMessageCount === $lastMessageCount) {
 				$newMessages = $newMessages;
 			}
+
+			$i++;
 		}
 		//{status, number matches, {message1, message2...}}
 		$response = [	"status" => "success",

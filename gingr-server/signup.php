@@ -52,15 +52,17 @@
 			echo json_encode($response);
 		} else {
 			//if email does not exist, sign up and send details to db
+			$userID = uniqid('', $more_entropy = true);
 			$date = date("Y-m-d H:i:s");
-			$query = "	INSERT INTO user_table (reg_date, first_name, last_name, email, password) 
-						VALUES (?, ?, ?, ?, ?)";
+
+			$query = "	INSERT INTO user_table (user_id, reg_date, first_name, last_name, email, password) 
+						VALUES (?, ?, ?, ?, ?, ?)";
 
 			//prepare query
 			$signupStmt = $mysqli->prepare($query);
 
 			//bind email to query and execute
-			$signupStmt->bind_param("sssss", $date, $firstname, $lastname, $email, $passwordHash);
+			$signupStmt->bind_param("ssssss", $userID, $date, $firstname, $lastname, $email, $passwordHash);
 			if (!$signupStmt->execute()) {
 				$response = ["status" => "error"];
   				$mysqli->close();
