@@ -8,6 +8,14 @@
 	//include databse info
 	require_once "db_config.php";
 
+	if($_POST['action'] == "getMatches") {
+		getMatches();
+	}
+
+	if($_POST['action'] == "getUsers") {
+		getUsers();
+	}
+
 	//get list of all matches for a user
 	function getMatches() {
   		//create database object
@@ -25,7 +33,7 @@
 		//find current message count for conversation
 		$query = "	SELECT * FROM message_counter
 					WHERE  user_id_1 = ?
-					OR user_id_2 = ?";
+					OR user_id_2 = ? ORDER BY date_time DESC";
 
 		//prepare statement and handle error
 		$stmt = $mysqli->prepare($query);
@@ -48,7 +56,7 @@
 			$numMatches = $result->num_rows;
 			$allUsers = [];
 
-			//loop through to get all matches ids and date of last 
+			//loop through to get all matches ids and date of last - really need to order the results by date...
 			$i = 0;
 			while ($row = $result->fetch_assoc()) {
 
@@ -133,17 +141,20 @@
 		$minAge = $mysqli->real_escape_string(htmlspecialchars($_POST["minAge"]));
 		$maxAge = $mysqli->real_escape_string(htmlspecialchars($_POST["maxAge"]));
 		$maxDistance = $mysqli->real_escape_string(htmlspecialchars($_POST["maxDistance"]));
-		$gingerBool = $mysqli->real_escape_string(htmlspecialchars($_POST["gingerBool"]));
+		$gingerPref = (bool)$mysqli->real_escape_string(htmlspecialchars($_POST["gingerPref"]));
+		$nonGingerPref = (bool)$mysqli->real_escape_string(htmlspecialchars($_POST["nonGingerPref"]));
 
-		//get all qualifying users from db
-		$query = "	SELECT * FROM user_table
-					WHERE  age >= ? AND age <= ? AND ginger = ?";
+		//need to do some crazy geometry calculation here - given lat, long and distance, work out max/min lat/long
+
+		//get all qualifying users from db (only ids to minimise loading time)
+		$query = "	SELECT user_id FROM user_table
+					WHERE  (age >= ? AND age <= ?) AND (ginger = ? OR ginger = ?)";
 
 		//prepare statement and handle error
 		$stmt = $mysqli->prepare($query);
 
-		//bind email to query and execute
-		$stmt->bind_param("s", $minAge, $maxAge, $gingerBool);
+		//bind email to query and execute - not sure how boolean will work here
+		$stmt->bind_param("iiii", $minAge, $maxAge, $gingerPref, !$nonGingerPref);
 		if (!$stmt->execute()) {
 			$response = ["status" => "error"];
   			$mysqli->close();
@@ -151,24 +162,18 @@
   			return;
 		}
 
-		//get result
-		$result = $stmt->get_result();
-
-		//if there is a result
-		if ($result) {
-
+		//get result - if there is a result
+		if ($result = $stmt->get_result()) {
+			//find the number of qualifying users
 			$numMatches = $result->num_rows;
 			$allUsers = [];
 
-			//loop through to get all matches ids and date of last 
+			//loop through to get all users and check against "decisions" table
 			$i = 0;
 			while ($row = $result->fetch_assoc()) {
 
-				$matchID = $row["match_id"];
-   				$user1 = $row["user_id_1"];
-    			$user2 = $row["user_id_2"];
-    			$dateTime = $row["date_time"];
-    			$lastMessage = $row["last_message"];
+				$userID = $row["user_id"];
+
 
     			//find target id and origin id, discard origin
     			if ($originUserID == $user1) {
@@ -203,24 +208,15 @@
 
 			//{status, numMatches, {user1, user2...}}
 			$response = [	"status" => "success",
-							"numMatches" => $numMatches,
+							"numUsers" => $numLoaded,
 							"users" => $allUsers];
 
 		} else {
-			$response = ["status" => "error"];
+			$response = ["status" => "empty"];
 		}
 		//close and respond
 		$mysqli->close();
 		echo json_encode($response);
-	}
-
-
-	if($_POST['action'] == "getMatches") {
-		getMatches();
-	}
-
-	if($_POST['action'] == "getUsers") {
-		getUsers();
 	}
 
 ?>

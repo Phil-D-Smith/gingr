@@ -33,9 +33,13 @@ settings {
 
 swipe interface {
 	process {
+		need to somehow pageinate this so it doesn't take forever to load
 		server loads qualifying profile's id, checks against "decisions" table
+		if a row exists:
+			check decisions, if no, or yes,yes (match) ignore
 		if no row exists:
-			send to client then load the rest of the profile
+		create one
+			load the rest of the profile
 			repeat a few times then send to client
 
 		cards design
@@ -58,6 +62,7 @@ swipe interface {
 
 matches/messaging screen {
 	template for matches list {
+		sort by date
 		sort gingers/non-gingers
 		highlight when new messages
 		thumbnail photo
@@ -66,9 +71,11 @@ matches/messaging screen {
 		ajax poll server for new messages continuously - reducing in frequency
 			background process
 
-		check if correct conversation is loaded - then load messages.
-		else, just contunue checking
+		check if correct conversation is loaded - then load messages
+		else, just continue checking
 
+		php needs to update relevant message counter for each match when checking messages
+		only current message string update!!!!!!!
 
 	}
 	layout and ui
@@ -91,7 +98,6 @@ other {
 		GCM - plugin for this
 		APMS - same plugin for this
 	}
-	probably a VERY good idea to make user ids psuedo random / hashed so a random number in a cookie can't get into an account
 
 }
 

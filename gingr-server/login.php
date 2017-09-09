@@ -8,6 +8,10 @@
 	//include databse info
 	require_once "db_config.php";
 
+	if($_POST['action'] == "login") {
+		login();
+	}
+	
   	//if login is clicked
 	function login() {
 		//create database object
@@ -53,11 +57,5 @@
     	$mysqli->close();
     	echo json_encode($response); 	
     }
-
-	if($_POST['action'] == "login") {
-		login();
-	}
-
-    
 
 ?>

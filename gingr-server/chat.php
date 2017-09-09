@@ -255,6 +255,8 @@
 
   		//escape, remove special characters, and format appropriately
   		$originUserID = $mysqli->real_escape_string(htmlspecialchars($_POST["originID"]));
+  		$currentPage = $mysqli->real_escape_string(htmlspecialchars($_POST["currentPage"]));
+  		$pageMatchID = (int)$mysqli->real_escape_string(htmlspecialchars($_POST["matchID"]));
 		//for "last updated" note on messages
 		$date = date("Y-m-d H:i:s");
 
@@ -303,17 +305,45 @@
 			//if new messages - get them, else - skip
 			if ($currentMessageCount > $lastMessageCount) {
 				$newMessages = $newMessages+1;
+
+				//if on the conversation page FOR THAT USER, update the relevant last_seen counter
+				if (($currentPage === "conversation") && ($matchID === $pageMatchID)) {
+					
+					//update last_seen message counter to the total message counter
+					if ($originUserID === $userID1) {
+						$updateQuery = "	UPDATE message_counter
+											SET last_seen_user_1 = ?
+											WHERE match_id = ?";
+					} elseif ($originUserID === $userID2) {
+						$updateQuery = "	UPDATE message_counter
+											SET last_seen_user_2 = ?
+											WHERE match_id = ?";
+					}
+
+					//prepare statement and handle error
+					$updateStmt = $mysqli->prepare($updateQuery);
+
+					//bind email to query and execute
+					$updateStmt->bind_param("ii", $currentMessageCount, $matchID);
+					if (!$updateStmt->execute()) {
+						$response = ["status" => "error"];
+  						$mysqli->close();
+  						echo json_encode($response);
+  						return;
+					}
+
+				}
+
 				//get NEW messages for that match
-				$query = "	SELECT all_messages.* FROM all_messages
+				$query = "	SELECT * FROM all_messages
 							WHERE match_id = ? 
 							AND message_number > ?";
-
 
 				//prepare statement and handle error
 				$stmt = $mysqli->prepare($query);
 
 				//bind email to query and execute
-				$stmt->bind_param("ii", $i, $lastMessageCount);
+				$stmt->bind_param("ii", $matchID, $lastMessageCount);
 				if (!$stmt->execute()) {
 					$response = ["status" => "error"];
   					$mysqli->close();
@@ -331,7 +361,6 @@
 					$dateTime = $row["date_time"];
 					$messageNumber = $row["message_number"];
 					$messageBody = $row["message_body"];
-					$matchID = $i;
 					$senderID = $row["sender_id"];
 
 					//message array for each message
@@ -351,7 +380,7 @@
 				$result->free();
 
 				//put each message set into array for each user
-				$allMatchMessages[$i] = $allMessages;
+				$allMatchMessages[$matchID] = $allMessages;
 
 			} elseif ($currentMessageCount === $lastMessageCount) {
 				$newMessages = $newMessages;
@@ -359,6 +388,7 @@
 
 			$i++;
 		}
+
 		//{status, number matches, {message1, message2...}}
 		$response = [	"status" => "success",
 						"newMessages" => $newMessages,

@@ -25,6 +25,16 @@ $$(document).on('deviceready', function() {
     //load login page on startup
     mainView.router.loadPage("login.html");
 
+
+
+    //on touch of a match, load those messages
+    $(document).on("touchend", ".back-matches", function(e) {
+        e.preventDefault();
+        console.log("back clicked");
+
+        //mainView.router.loadPage("matches.html");
+    }); 
+
 });
 
 
@@ -49,9 +59,9 @@ $$('.panel-close').on('click', function (e) {
 
 
 function onLocationSuccess(position) {
-    var latitude = position.coords.latitude;
-    var longitude = position.coords.longitude;
-    var accuracy = position.coords.accuracy;
+    var latitude = position.coords.latitude*1000000;
+    var longitude = position.coords.longitude*1000000;
+    var accuracy = position.coords.accuracy*1000000;
 
     console.log(latitude + " " + longitude);
 }

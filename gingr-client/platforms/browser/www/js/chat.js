@@ -345,12 +345,12 @@ function getMessages(matchID, matchName, userID) {
 }
 
 //get message string from db for target
-function checkMessages(matchID) {
+function checkMessages() {
 	var originUserID = localStorage.id;
 	var	conversationStarted = false;	
 
 	//make data string
-	var dataString = {"action": "checkMessages", "originID": originUserID};
+	var dataString = {"action": "checkMessages", "originID": originUserID, "currentPage": currentPage, "matchID": localStorage.matchID};
 	console.log(dataString);
 
 	//ajax post to get user id from email
@@ -371,12 +371,12 @@ function checkMessages(matchID) {
 			if (data.status == "success") {
 				//if new messages - loop through matched user data and populate list
 				if (data.newMessages) {
-					console.log("new messages avaliable" + data.newMessages);
+					console.log(data.newMessages + " new message threads avaliable");
 					//if the conversation page is loaded
 					if (currentPage == "conversation") {
 						matchID = localStorage.matchID;
 						//then load the new messages for that match
-						for (i = 0; i < (data.currentMessageCount - data.lastMessageCount); i++) {
+						for (i = 0; i < (data.messages[matchID][0]["currentMessageCount"] - data.messages[matchID][0]["lastMessageCount"]); i++) {
 							console.log("sorting out new message");
 							//get into local variables for readability
 							var dateTime = data.messages[matchID][i]["dateTime"];
@@ -385,6 +385,11 @@ function checkMessages(matchID) {
 							var senderID = data.messages[matchID][i]["senderID"];
 							//conver to js date object
 							var dateObj = new Date(dateTime);
+							var minutes = ('0' + dateObj.getMinutes()).slice(-2);
+							var hours = ('0' + dateObj.getHours()).slice(-2);
+							var day = ('0' + dateObj.getDate()).slice(-2);
+							var month = ('0' + (dateObj.getMonth()+1)).slice(-2);
+							var year = ('0' + dateObj.getYear()).slice(-2);
 
 							//get avatar in blob format
 							var avatar = ""; //god knows how to get photos
@@ -416,7 +421,7 @@ function checkMessages(matchID) {
 								//date and time
 								//if conversation is not started: "today", else: false (no day) 
 								day: !conversationStarted ? 'Today' : false,
-								time: !conversationStarted ? dateObj.getHours() + ':' + dateObj.getMinutes() : false
+								time: !conversationStarted ? hours + ':' + minutes : false
   							})
  
 							//update conversation flag

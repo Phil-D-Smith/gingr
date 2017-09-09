@@ -8,6 +8,10 @@
 	//include databse info
 	require_once "db_config.php";
 
+	if($_POST['action'] == "signup") {
+		signup();
+	}
+
 	function signup() {
 		//create database object
 		$mysqli = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME)
@@ -91,10 +95,6 @@
 		}
 
 		$mysqli->close();
-	}
-
-	if($_POST['action'] == "signup") {
-		signup();
 	}
 
 ?>
