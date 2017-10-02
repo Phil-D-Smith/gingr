@@ -3009,11 +3009,11 @@ html:not(.watch-active-state) .button.button-fill:active,
   -moz-appearance: none;
   -ms-appearance: none;
   appearance: none;
-  border: none;
-  height: 28px;
-  width: 28px;
+  .range-thumb();
   position: relative;
-  background: none;
+  cursor: pointer;
+  margin-top: -1px;
+  
 }
 .range-slider input[type="range"]::-webkit-slider-thumb:after {
   height: 28px;

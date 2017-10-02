@@ -20,6 +20,7 @@
 		checkMessages();
 	}
 
+
 	//gets ALL messages from db for a conversation
 	function getMessages() {
 		//create database object
@@ -121,7 +122,7 @@
 
 				$dateTime = $row["date_time"];
 				$messageNumber = $row["message_number"];
-				$messageBody = $row["message_body"];
+				$messageBody = stripslashes($row["message_body"]);
 				$senderID = $row["sender_id"];
 
 				//message array for each message
@@ -160,7 +161,7 @@
   		}
 
 
-  		//escape, remove special characters, and format appropriately
+  		//escape, remove special characters, and format appropriately - watch messageBody, not sure about this
   		$matchID = $mysqli->real_escape_string(htmlspecialchars($_POST["matchID"]));
   		$senderID = $mysqli->real_escape_string(htmlspecialchars($_POST["senderID"]));
   		$messageBody = $mysqli->real_escape_string(htmlspecialchars($_POST["messageBody"]));
@@ -360,7 +361,7 @@
 				while ($row = $result->fetch_assoc()) {
 					$dateTime = $row["date_time"];
 					$messageNumber = $row["message_number"];
-					$messageBody = $row["message_body"];
+					$messageBody = stripslashes($row["message_body"]);
 					$senderID = $row["sender_id"];
 
 					//message array for each message

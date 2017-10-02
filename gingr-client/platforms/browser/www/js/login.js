@@ -30,19 +30,34 @@ $$(document).on('deviceready', function() {
 	myApp.onPageInit('login', function (page) {
 
 		console.log("login ready");
-
-		//event listener for signup button
-		//var loginButton = document.getElementById("login");
-		//if(loginButton) {
-		//	loginButton.addEventListener("click", login, false);
-		//}
 		
 		//bit crap, sends two requests - works though
 		//this handles the login button events for the mobile touch of the user
+		localStorage.login = "false";
+		localStorage.email = 0;
+		localStorage.id = 0;
+		localStorage.matchID = 0;
+		localStorage.matchName = 0;
+
 		$("#login").on("touchend", function (e) {
 			e.preventDefault();
 			login();
 		});
+
+	});
+
+	//wait for login page to be fully loaded
+	myApp.onPageInit('recovery', function (page) {
+
+		console.log("recovery ready");
+		
+		//bit crap, sends two requests - works though
+		//this handles the login button events for the mobile touch of the user
+		$("#recover").on("touchend", function (e) {
+			e.preventDefault();
+			recover();
+		});
+
 	});
 });
 
@@ -78,14 +93,13 @@ function login() {
 		//ajax post
 		$.ajax({
 			type: "POST",
-			url: "http://gingr-server.com/login.php",
+			url: server + "/login.php",
 			data: dataString,
 			dataType: 'json',
 			crossDomain: true,
 			cache: false,
 
 			beforeSend: function() {
-				$("#login").val('Connecting...');
 				console.log("connecting to server");
 			},
 
@@ -157,7 +171,7 @@ function signup() {
 		//ajax post to server
 		$.ajax({
 			type: "POST",
-			url: "http://gingr-server.com/signup.php",
+			url: server + "/login.php",
 			data: dataString,
 			dataType: 'json',
 			crossDomain: true,
@@ -201,6 +215,131 @@ function signup() {
 	}
 	return false;
 }
+
+//verify a user with a session ID saved locally
+function verifyUser() {
+
+	//create data array
+	var dataString = {"action": "verify", "userID": localStorage.id};
+
+	console.log(dataString);
+
+	//if form isnt empty, post ajax request to server
+	if ($.trim(localStorage.id).length > 0) {
+
+		console.log("input checked");
+
+		$.support.cors = true;
+
+		//ajax post
+		$.ajax({
+			type: "POST",
+			url: server + "/login.php",
+			data: dataString,
+			dataType: 'json',
+			crossDomain: true,
+			cache: false,
+
+			beforeSend: function() {
+				$("#login").val('Connecting...');
+				console.log("connecting to server");
+			},
+
+			//display success/fail message - put something in data on server
+			success: function(data, textString, xhr) {
+				if (data.status == "success") {
+					console.log("session data OK");
+					mainView.router.loadPage("swipe.html");
+				} else {
+					mainView.router.loadPage("login.html");
+				}
+			},
+
+			error: function(xhr, ajaxOptions, errorThrown) {
+				console.log(xhr);
+				console.log(errorThrown);
+				myApp.alert("Unknown error, please try again", "Login Failed");
+				mainView.router.loadPage("login.html");
+			},
+
+			complete: function(data) {
+				if (data.readyState == "0") {
+					console.log("unsent");
+				} else if (data.readyState == "4") {
+					console.log("done");
+				}	
+			}
+
+		});
+	} 
+	return false;
+}
+
+//recover a forgotten password
+function recover() {
+
+	//get values of form into variables
+	var email = $("#email").val();
+
+	//create data array
+	var dataString = {"action": "recover", "userEmail": email};
+
+	console.log(dataString);
+
+	if ($.trim(email).length == 0) {
+		myApp.alert("Email required", "Recovery Failed");
+	} else if ($.trim(email).length > 0) {		
+
+		console.log("input checked");
+
+		$.support.cors = true;
+
+		//ajax post
+		$.ajax({
+			type: "POST",
+			url: server + "/login.php",
+			data: dataString,
+			dataType: 'json',
+			crossDomain: true,
+			cache: false,
+
+			beforeSend: function() {
+				$("#login").val('Connecting...');
+				console.log("connecting to server");
+			},
+
+			//display success/fail message - put something in data on server
+			success: function(data, textString, xhr) {
+				if (data.status == "success") {
+					console.log("recovery email attempted");
+					mainView.router.loadPage("recoveryCode.html");
+				} else {
+					myApp.alert("Session expired, please try again", "Login Failed");
+				}
+			},
+
+			error: function(xhr, ajaxOptions, errorThrown) {
+				console.log(xhr);
+				console.log(errorThrown);
+				myApp.alert("Unknown error, please try again", "Login Failed");
+			},
+
+			complete: function(data) {
+				if (data.readyState == "0") {
+					console.log("unsent");
+				} else if (data.readyState == "4") {
+					console.log("done");
+				}	
+			}
+
+		});
+	} 
+	return false;
+}
+
+
+
+
 
 //validate email format - not working
 function validateEmail(emailUT) {

@@ -1,18 +1,20 @@
 login/signup {
-	sessions and session variables
 	forgot password
-	remember credentials
+		recovery email
+		code in db
+		check code
+		delete code from db when complete
 	SSL
 	login with facebook
 }
 
 profile {
-	profile complete variable - if not, redirect to profile setup on login
+	profile complete column in db - if not, redirect to profileSetup on login
 	create profile
 	bio
 	age
 	ginger?
-	find position
+	find position periodically, and check it is realistic
 	upload photos
 	upload photos from facebook
 
@@ -22,86 +24,61 @@ profile {
 preferences {
 	age range
 	max distance
+		mad geometric calculated
 	ginger?
 }
 
 settings {
 	notifications
-	logout
+	privacy
 	license/legal rubbish
 }
 
 swipe interface {
 	process {
-		need to somehow pageinate this so it doesn't take forever to load
+		animate a heart/tick/cross or some shit
+		get new matches when pull down - iScroll
+		when number of users loaded = 0, stop checking/reduce check time
 		server loads qualifying profile's id, checks against "decisions" table
-		if a row exists:
-			check decisions, if no, or yes,yes (match) ignore
-		if no row exists:
-		create one
-			load the rest of the profile
-			repeat a few times then send to client
-
-		cards design
-		yes/no button - big
-		submit decision to server
-		save in decisions
-	before adding to "matches" table {
-		like a user profile
-		check "decisions" table for row with targetUser = your own userID:
-			if both yes, add row to "matches"
-			if no, just add decision and do nothing
-
-		if no row exists:
-			add row to table "decisions"
-			
-		decisions db:  uid, originUser, originDecision, targetUser, targetDecision
-
 	}
+	smoother scroll
+
 }
 
 matches/messaging screen {
+	correct date/time for timezone stuff
 	template for matches list {
-		sort by date
+		sort matches by date - order by date last message desc
 		sort gingers/non-gingers
 		highlight when new messages
 		thumbnail photo
 	}
 	process {
 		ajax poll server for new messages continuously - reducing in frequency
-			background process
+		background process
 
-		check if correct conversation is loaded - then load messages
-		else, just continue checking
-
-		php needs to update relevant message counter for each match when checking messages
-		only current message string update!!!!!!!
 
 	}
-	layout and ui
 	messaging - ajax polling, increasing time with inactivity
+	addslashes, stripslashes instead of realescape string
 	notifications
 	ratchet/sockets?
 }
 
 
+
 plugins {
 	cordova nativeStorage to replace localStorage
 	cordova geolocation - NSLocationWhenInUseUsageDescription
-	phonegap-plugin-push
+	phonegap-plugin-push - GCM/APMS
 	admob
-}
-	
-
-other {
-	push notifications {
-		GCM - plugin for this
-		APMS - same plugin for this
-	}
-
 }
 
 monetize {
 	some of the matches are adverts
 	"watch this advert for ____ bonus"
+}
+
+other {
+
 }

@@ -31,7 +31,6 @@ $$(document).on('deviceready', function() {
 
 			mainView.router.loadPage("conversation.html");
 		}); 
-
 	});
 
 	//wait for conversation page to be fully loaded
@@ -51,16 +50,19 @@ $$(document).on('deviceready', function() {
 			//get match ID passed through browser storage
 			var matchID = localStorage.matchID;
 			var userID = localStorage.id;
-
+			//send message from userID
 			sendMessage(matchID, userID);
+
+			//clear match ID so it doesn't mess stuff up
+			//var matchID = 0;
 
 			console.log("send clicked");
 		}); 
 	});
 
-	//some mad ajax polling to periodically check messages - ideally vary frequency with inactivity
+	//some mad ajax polling to periodically check messages - vary by inactivity
 	setInterval(checkMessages, checkInterval);
-
+	//define inactivity as - no messages sent/recieved for set time / conversation not open / not on app
 
 });
 
@@ -69,7 +71,7 @@ $$(document).on('deviceready', function() {
 function getMatches() {
 
 	//get email from local stroage
-	userID = localStorage.id;
+	var userID = localStorage.id;
 	console.log(userID);
 
 	//make data string
@@ -79,7 +81,7 @@ function getMatches() {
 	//ajax post to get user id from email
 	$.ajax({
 		type: "POST",
-		url: "http://gingr-server.com/matches.php",
+		url: server + "/matches.php",
 		data: dataString,
 		dataType: 'json',
 		crossDomain: true,
@@ -172,7 +174,7 @@ function sendMessage(matchID, userID) {
 	//ajax post to get user id from email
 	$.ajax({
 		type: "POST",
-		url: "http://gingr-server.com/chat.php",
+		url: server + "/chat.php",
 		data: dataString,
 		dataType: 'json',
 		crossDomain: true,
@@ -257,7 +259,7 @@ function getMessages(matchID, matchName, userID) {
 	//ajax post to get user id from email
 	$.ajax({
 		type: "POST",
-		url: "http://gingr-server.com/chat.php",
+		url: server + "/chat.php",
 		data: dataString,
 		dataType: 'json',
 		crossDomain: true,
@@ -356,7 +358,7 @@ function checkMessages() {
 	//ajax post to get user id from email
 	$.ajax({
 		type: "POST",
-		url: "http://gingr-server.com/chat.php",
+		url: server + "/chat.php",
 		data: dataString,
 		dataType: 'json',
 		crossDomain: true,
@@ -439,7 +441,7 @@ function checkMessages() {
 		error: function(xhr, ajaxOptions, errorThrown) {
 			console.log(xhr);
 			console.log(errorThrown);
-			myApp.alert("Unknown error 02, please try again", "Action Failed");
+			myApp.alert("Check your internet", "No Connection");
 		},
 
 		complete: function(data) {

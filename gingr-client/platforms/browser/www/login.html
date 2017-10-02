@@ -6,7 +6,7 @@
 <body>
 
     <div class="pages">
-        <div data-page="login" class="page no-navbar no-toolbar">
+        <div data-page="login" class="page no-navbar no-toolbar no-swipeback">
 
             <!-- page-content has additional login-screen content -->
                 <div class="page-content login-screen-content">
@@ -37,14 +37,13 @@
                             <ul>
                                 <li>
                                     <div class="login-buttons">
-                                        <!--<div id="errorMessage" class="error-message label"> </div>-->
-                                        <button id="login" class="item-link list-button" name="login">Sign In</button>
-                                        <br>
+                                        <button name="login" id="login" class="item-link list-button">Sign In</button>       
                                         <a href="signup.html" class="item-link list-button">Don't have an account?</a>
-                                    </div>
+                                        <br>
+                                        <a href="recovery.html" class="color-gray item-link list-button" style="font-size: 0.8em;">Forgotten your password?</a>     
+                                    </div>      
                                 </li>
                             </ul>
-                            <div class="list-block-label">Forgotten your password?</div>
                         </div>
                     </div>
                 </div>

@@ -29,48 +29,94 @@
 	background: #FFFFFF;
 }
 
+.blank-back-button {
+	padding: 20px;
+	position: absolute;
+}
+
 .swipe-block {
 	margin: 3%;
 	padding: 0px;
 }
 
+/*
 .card-container {
 	padding: 0px;
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-around;
 }
-.card {
+*/
+
+.user-card {
 	/*box-shadow: 5px 5px 5px #888888;*/
-	display: inline-flex;
+	/*display: inline-flex;
 	flex-grow: 1;
-	vertical-align: middle;
-	border-radius: 5px;
-	margin: 5px;
-	width: 130px;
+	vertical-align: middle;*/
+	background-size: cover;
+    background-position: center;
+	margin: 7%;
+	padding-top: 3%;
+	padding-left: 3%;
+	padding-right: 3%;
+	padding-bottom: 0%;
+}
+
+.user-card .card-header {
+	height: 76vw;
+    background-size: cover;
+    background-position: center;
+}
+
+.profile-card {
+	margin: 5%;
+}
+
+.profile-card .card-header {
+	height: 90vw;
+    background-size: cover;
+    background-position: center;
+}
+
+.swipe-footer {
+	position: fixed;
+   	bottom: 0;
+   	width: 100%;
+   	height: 60px;  
 }
 
 .invisible {
 	visibility: hidden;
 }
 
-.card-content-inner {
+.user-card .card-content-inner {
 	padding: 2%;
 	margin: 5px;
 	overflow: hidden;
 }
 
-.card-content-inner p {
-	font-size: 1em;
+.user-card .card-content-inner p {
+	font-size: 1.2em;
+	color: grey;
+}
+
+.user-card .card-content-inner b {
+	font-size: 1.5em;
 	text-align: center;
 	margin: auto;
 	margin: 0.5em 0;
 }
 
-.card-content-inner .profile-picture {
-	margin: 0%;
-	width: 100%;
-	border-radius: 0px;
+.profile-card .card-content-inner p {
+	font-size: 1.2em;
+	color: grey;
+}
+
+.profile-card .card-content-inner b {
+	font-size: 1.5em;
+	text-align: center;
+	margin: auto;
+	margin: 0.5em 0;
 }
 
 .navbar {
@@ -105,7 +151,7 @@
 	vertical-align: middle;
 	margin: auto;
 	border-radius: 50px;
-	}
+}
 
 .navbar-link {
 	height: 50px;
@@ -131,6 +177,13 @@
 
 .message-sent .message-text {
 		background-color: #FF6600;
+}
+
+.alignleft {
+	float: left;
+}
+.alignright {
+	float: right;
 }
 
 
