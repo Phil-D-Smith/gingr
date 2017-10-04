@@ -53,14 +53,6 @@ module.exports = [
         "clobbers": [
             "window.StatusBar"
         ]
-    },
-    {
-        "id": "cordova-plugin-firebase.FirebasePlugin",
-        "file": "plugins/cordova-plugin-firebase/www/firebase.js",
-        "pluginId": "cordova-plugin-firebase",
-        "clobbers": [
-            "FirebasePlugin"
-        ]
     }
 ];
 module.exports.metadata = 
@@ -71,8 +63,7 @@ module.exports.metadata =
     "cordova-plugin-console": "1.0.7",
     "cordova-plugin-geolocation": "2.4.3",
     "cordova-plugin-statusbar": "1.0.1",
-    "cordova-plugin-whitelist": "1.2.2",
-    "cordova-plugin-firebase": "0.1.24"
+    "cordova-plugin-whitelist": "1.2.2"
 };
 // BOTTOM OF METADATA
 });
