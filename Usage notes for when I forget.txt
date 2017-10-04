@@ -1,4 +1,0 @@
-gingr-client -> gingr-client.com
-gingr-server -> gingr-server.com
-
-both served by apache virtual host via XAMPP
