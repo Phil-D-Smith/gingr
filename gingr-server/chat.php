@@ -135,14 +135,16 @@
     			$allMessages[$i] = $messageData;
 				$i++;
 			}
-		}
-		//free memory
-		$result->free();
 
-		//{status, count, {message1, message2...}}
-		$response = [	"status" => "success",
-						"messageCount" => $messageCount,
-						"messages" => $allMessages];
+			//free memory
+			$result->free();
+
+			//{status, count, {message1, message2...}}
+			$response = [	"status" => "success",
+							"messageCount" => $messageCount,
+							"messages" => $allMessages];
+		}
+		
 
 		//close and respond
 		$mysqli->close();

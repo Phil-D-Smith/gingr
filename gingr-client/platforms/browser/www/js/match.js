@@ -174,7 +174,6 @@ function getUsers() {
 
 //get all profile info and photos for user clicked on
 function loadTargetProfile(targetID) {
-
 	//get id stored locally
 	var userID = localStorage.id;
 
@@ -182,7 +181,7 @@ function loadTargetProfile(targetID) {
 	var dataString = {"action": "loadTargetProfile", "id": userID, "targetID": targetID};
 	console.log(dataString);
 
-	//ajax post to get user id from email
+	//ajax post to get profile data
 	$.ajax({
 		type: "POST",
 		url: server + "/matches.php",
@@ -212,8 +211,6 @@ function loadTargetProfile(targetID) {
 				var age = Math.ceil(ageMilli / (1000 * 3600 * 24 * 365.25));
 
 				//"templates" for user profile
-				var $image = $("<div style='background-image:url(" + profilePhoto + ")' valign='bottom' class='card-header color-white no-border'></div>");
-
 				var $info = $(	"<p><b>" + firstName + ", " + age + "</b></p>" +
 								"<p>" + targetDistance + " miles away</p>" +
                					"<p>" + bio + "</p>" );
@@ -226,8 +223,8 @@ function loadTargetProfile(targetID) {
                         				"<i style='font-size: 50px; color: red;' class='f7-icons'>close_round_fill</i>" +
                         			"</a>" );
 
-				//add to DOM
-				$(".target-profile-photo").append($image);
+				//add photo and info to DOM
+				$(".profile-photo").css("background-image","url(data:image/png;base64," + profilePhoto + ")");
 				$(".target-info").append($info);
 				$(".target-buttons").append($buttons);
 
@@ -286,7 +283,8 @@ function submitDecision(targetID, decision) {
 					$(".user-card").filter("[data-user-id=" + targetID + "]").remove();
 				} else if (currentPage == "targetProfile") {
 					//go back
-					mainView.router.back(url = "swipe.html", ignoreCache = true, force = true);
+					mainView.router.reloadPreviousPage("swipe.html");
+					mainView.router.back(url = "swipe.html", ignoreCache = true, reload = true);
 				}
 				
 

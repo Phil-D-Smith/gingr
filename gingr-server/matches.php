@@ -24,7 +24,6 @@
 		submitDecision();
 	}
 
-	
 
 	//get all qualifying matches from server
 	function getUsers() {
@@ -351,7 +350,7 @@
     		$latitude = $row["latitude"];
     		$longitude = $row["longitude"];
     		$gingerPref = $row["ginger_pref"];
-    		$profilePhoto = 0;
+    		$profilePhoto = $row["profile_photo"];
 			//free memory
 			$result->free();
 
@@ -443,7 +442,6 @@
 				if (($decision == 1) && ($targetDecision == 1)) {
 					//get current date
 					$date = date("Y-m-d H:i:s");
-
 					//query for match insertion
 					$query = "	INSERT INTO message_counter (user_id_1, user_id_2, date_time) 
 								VALUES (?, ?, ?)";
@@ -464,7 +462,7 @@
 
 				} else {
 					//respond with success
-					$response = ["status" => $targetDecision];
+					$response = ["status" => "success"];
 				}	
 
 				$mysqli->close();
@@ -487,7 +485,7 @@
   				echo json_encode($response);
   				return;
 			} else {
-				//successfully entered, end
+				//successfully entered,
 				$response = ["status" => "success"];
   				$mysqli->close();
   				echo json_encode($response);
