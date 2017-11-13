@@ -6,7 +6,7 @@
 
 //interval for checking messages
 var checkInterval = 3000;
-var currentPage = null;
+var currentPage = 0;
 
 //handle Cordova device ready event
 $$(document).on('deviceready', function() {
@@ -356,100 +356,102 @@ function checkMessages() {
 	console.log(dataString);
 
 	//ajax post to get user id from email
-	$.ajax({
-		type: "POST",
-		url: server + "/chat.php",
-		data: dataString,
-		dataType: 'json',
-		crossDomain: true,
-		cache: false,
+	if (originUserID) {
+		$.ajax({
+			type: "POST",
+			url: server + "/chat.php",
+			data: dataString,
+			dataType: 'json',
+			crossDomain: true,
+			cache: false,
 
-		beforeSend: function() {
+			beforeSend: function() {
 
-		},
+			},
 
-		//display success/fail message - put something in data on server
-		success: function(data, textString, xhr) {
-			if (data.status == "success") {
-				//if new messages - loop through matched user data and populate list
-				if (data.newMessages) {
-					console.log(data.newMessages + " new message threads avaliable");
-					//if the conversation page is loaded
-					if (currentPage == "conversation") {
-						matchID = localStorage.matchID;
-						//then load the new messages for that match
-						for (i = 0; i < (data.messages[matchID][0]["currentMessageCount"] - data.messages[matchID][0]["lastMessageCount"]); i++) {
-							console.log("sorting out new message");
-							//get into local variables for readability
-							var dateTime = data.messages[matchID][i]["dateTime"];
-							var messageNumber = data.messages[matchID][i]["messageNumber"];
-							var messageBody = data.messages[matchID][i]["messageBody"];
-							var senderID = data.messages[matchID][i]["senderID"];
-							//conver to js date object
-							var dateObj = new Date(dateTime);
-							var minutes = ('0' + dateObj.getMinutes()).slice(-2);
-							var hours = ('0' + dateObj.getHours()).slice(-2);
-							var day = ('0' + dateObj.getDate()).slice(-2);
-							var month = ('0' + (dateObj.getMonth()+1)).slice(-2);
-							var year = ('0' + dateObj.getYear()).slice(-2);
+			//display success/fail message - put something in data on server
+			success: function(data, textString, xhr) {
+				if (data.status == "success") {
+					//if new messages - loop through matched user data and populate list
+					if (data.newMessages) {
+						console.log(data.newMessages + " new message threads avaliable");
+						//if the conversation page is loaded
+						if (currentPage == "conversation") {
+							matchID = localStorage.matchID;
+							//then load the new messages for that match
+							for (i = 0; i < (data.messages[matchID][0]["currentMessageCount"] - data.messages[matchID][0]["lastMessageCount"]); i++) {
+								console.log("sorting out new message");
+								//get into local variables for readability
+								var dateTime = data.messages[matchID][i]["dateTime"];
+								var messageNumber = data.messages[matchID][i]["messageNumber"];
+								var messageBody = data.messages[matchID][i]["messageBody"];
+								var senderID = data.messages[matchID][i]["senderID"];
+								//conver to js date object
+								var dateObj = new Date(dateTime);
+								var minutes = ('0' + dateObj.getMinutes()).slice(-2);
+								var hours = ('0' + dateObj.getHours()).slice(-2);
+								var day = ('0' + dateObj.getDate()).slice(-2);
+								var month = ('0' + (dateObj.getMonth()+1)).slice(-2);
+								var year = ('0' + dateObj.getYear()).slice(-2);
 
-							//get avatar in blob format
-							var avatar = ""; //god knows how to get photos
-							var firstName;
-							//if "from" = logged in user, message type = sent, else recieved						
-							if (senderID == localStorage.id) {
-								var messageType = "sent";
-								firstName = "Me";
-							} else {
-								var messageType = "received";
-								//avatar and name for received message
-								avatar = '';
-								//firstName = matchName;
+								//get avatar in blob format
+								var avatar = ""; //god knows how to get photos
+								var firstName;
+								//if "from" = logged in user, message type = sent, else recieved						
+								if (senderID == localStorage.id) {
+									var messageType = "sent";
+									firstName = "Me";
+								} else {
+									var messageType = "received";
+									//avatar and name for received message
+									avatar = '';
+									//firstName = matchName;
+								}
+
+								// init messages and messagebar globally
+								var	myMessages = myApp.messages('.messages', {
+			 						autoLayout:true
+								});
+								var	myMessagebar = myApp.messagebar('.messagebar');
+						
+								//add message
+								myMessages.addMessage({
+									//message data
+									text: messageBody,
+									type: messageType,
+									avatar: avatar,
+									//name: firstName,
+									//date and time
+									//if conversation is not started: "today", else: false (no day) 
+									day: !conversationStarted ? 'Today' : false,
+									time: !conversationStarted ? hours + ':' + minutes : false
+  								})
+ 	
+								//update conversation flag
+								conversationStarted = true;
 							}
-
-							// init messages and messagebar globally
-							var	myMessages = myApp.messages('.messages', {
-		 						autoLayout:true
-							});
-							var	myMessagebar = myApp.messagebar('.messagebar');
-					
-							//add message
-							myMessages.addMessage({
-								//message data
-								text: messageBody,
-								type: messageType,
-								avatar: avatar,
-								//name: firstName,
-								//date and time
-								//if conversation is not started: "today", else: false (no day) 
-								day: !conversationStarted ? 'Today' : false,
-								time: !conversationStarted ? hours + ':' + minutes : false
-  							})
- 
-							//update conversation flag
-							conversationStarted = true;
 						}
+					} else {
+						console.log("no new messages");
 					}
-				} else {
-					console.log("no new messages");
+				} else if (data.status == "error") {
+					myApp.alert("Unknown error 04, please try again", "Action Failed");
 				}
-			} else if (data.status == "error") {
-				myApp.alert("Unknown error 04, please try again", "Action Failed");
+			},
+
+			error: function(xhr, ajaxOptions, errorThrown) {
+				console.log(xhr);
+				console.log(errorThrown);
+				myApp.alert("Check your internet", "No Connection");
+			},
+
+			complete: function(data) {
+				if (data.readyState == "0") {
+					console.log("unsent");
+				} else if (data.readyState == "4") {
+					console.log("done");
+				}	
 			}
-		},
-
-		error: function(xhr, ajaxOptions, errorThrown) {
-			console.log(xhr);
-			console.log(errorThrown);
-			myApp.alert("Check your internet", "No Connection");
-		},
-
-		complete: function(data) {
-			if (data.readyState == "0") {
-				console.log("unsent");
-			} else if (data.readyState == "4") {
-				console.log("done");
-			}	
-		}
-	});
+		});
+	}
 }
