@@ -6,7 +6,7 @@ var myApp = new Framework7({
 // If we need to use custom DOM library, let's save it to $$ variable:
 var $$ = Dom7;
 
-var server = "http://gingr-server.com";
+var server = "http://192.168.1.140:8000/gingr_server/";
 var currentPage = null;
 
 // Add view
@@ -18,16 +18,12 @@ var mainView = myApp.addView('.view-main', {
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function() {
     console.log("Device is ready!");
-
-    //get position on startup - 10s timeout
-    navigator.geolocation.getCurrentPosition(onLocationSuccess, onLocationError, {timeout:10000});
-
     //modify status bar
     StatusBar.styleBlackTranslucent;
 
-    //load login page on startup, if user already signed in, skip
-    if (localStorage.id) {
-        verifyUser();
+    //load login page on startup, if user already signed in, verify and skip
+    if ($.trim(window.localStorage.getItem("id")).length > 0) {
+        verifyUser()
     } else {
         mainView.router.loadPage("login.html");
     }
@@ -43,8 +39,7 @@ $$(document).on('deviceready', function() {
 });
 
 
-
-
+/*
 //if change page, stop loading them
 myApp.onPageInit('login', function(page) {
      clearInterval(matchCheck);
@@ -73,10 +68,7 @@ myApp.onPageInit('conversation', function(page) {
 myApp.onPageInit('matches', function(page) {
      clearInterval(matchCheck);
 });
-
-
-
-
+*/
 
 //close panel when link pressed
 $$('.panel-close').on('click', function (e) {
@@ -84,12 +76,16 @@ $$('.panel-close').on('click', function (e) {
     myApp.closePanel();
 });
 
-
+//gps callbacks
+function updateLocation() {
+    //get position on startup - 10s timeout
+    navigator.geolocation.getCurrentPosition(onLocationSuccess, onLocationError, {timeout:10000});
+}
 
 function onLocationSuccess(position) {
-    var latitude = position.coords.latitude*1000000;
-    var longitude = position.coords.longitude*1000000;
-    var accuracy = position.coords.accuracy*1000000;
+    window.localStorage.setItem("latitude", position.coords.latitude);
+    window.localStorage.setItem("longitude", position.coords.longitude);
+    window.localStorage.setItem("accuracy", position.coords.accuracy);
 
     console.log(latitude + ", " + longitude);
 }

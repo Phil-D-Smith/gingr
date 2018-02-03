@@ -19,18 +19,18 @@ $$(document).on('deviceready', function() {
 
 	//wait for preferences page to be fully loaded
 	myApp.onPageInit('preferences', function (page) {
-		var userID = localStorage.id;
+		var userID = window.localStorage.getItem("id");
 		getPreferences(userID);
 	});
 
 	myApp.onPageInit('settings', function (page) {
-		var userID = localStorage.id;
+		var userID = window.localStorage.getItem("id");
 		getSettings(userID);
 	});
 
 	//wait for profile page to be fully loaded
 	myApp.onPageInit('profile', function (page) {
-		var userID = localStorage.id;
+		var userID = window.localStorage.getItem("id");
 		loadProfile(userID);
 	});
 
@@ -41,11 +41,11 @@ function logout() {
 	//confirm message - callback
     myApp.confirm("Are you sure?", "Log Out", function () {
     	//clear local data
-    	localStorage.login = "false";
-		localStorage.email = 0;
-		localStorage.id = 0;
-		localStorage.matchID = 0;
-		localStorage.matchName = 0;
+    	window.localStorage.setItem("login", false);
+		window.localStorage.setItem("email", 0);
+		window.localStorage.setItem("id", 0);
+		window.localStorage.setItem("matchID", 0);
+		window.localStorage.setItem("matchName", 0);
 		//redirect to login page
 		mainView.router.loadPage("login.html");
     });
@@ -54,7 +54,7 @@ function logout() {
 //get all profile info and photos for user clicked on
 function loadProfile(userID) {
 	//get id stored locally
-	var userID = localStorage.id;
+	var userID = localStorage.getItem("id");
 
 	//make data string - could send current lat/long here?
 	var dataString = {"action": "loadProfile", "id": userID};

@@ -33,11 +33,11 @@ $$(document).on('deviceready', function() {
 		
 		//bit crap, sends two requests - works though
 		//this handles the login button events for the mobile touch of the user
-		localStorage.login = "false";
-		localStorage.email = 0;
-		localStorage.id = 0;
-		localStorage.matchID = 0;
-		localStorage.matchName = 0;
+		window.localStorage.setItem("login", false);
+		window.localStorage.setItem("email", 0);
+		window.localStorage.setItem("id", 0);
+		window.localStorage.setItem("matchID", 0);
+		window.localStorage.setItem("matchName", 0);
 
 		$("#login").on("touchend", function (e) {
 			e.preventDefault();
@@ -93,8 +93,8 @@ function login() {
 		//ajax post
 		$.ajax({
 			type: "POST",
-			url: server + "/login.php",
-			data: dataString,
+			url: server + "login/login/",
+			data: JSON.stringify(dataString),
 			dataType: 'json',
 			crossDomain: true,
 			cache: false,
@@ -106,9 +106,9 @@ function login() {
 			//display success/fail message - put something in data on server
 			success: function(data, textString, xhr) {
 				if (data.status == "correct") {
-					localStorage.login = "true";
-					localStorage.email = email;
-					localStorage.id = data.id;
+					window.localStorage.setItem("login", true);
+					window.localStorage.setItem("email", email);
+					window.localStorage.setItem("id", data.id);
 					mainView.router.loadPage("swipe.html");
 				} else {
 					myApp.alert("Incorrect email or password", "Login Failed");
@@ -171,8 +171,8 @@ function signup() {
 		//ajax post to server
 		$.ajax({
 			type: "POST",
-			url: server + "/login.php",
-			data: dataString,
+			url: server + "login/signup/",
+			data: JSON.stringify(dataString),
 			dataType: 'json',
 			crossDomain: true,
 			cache: false,
@@ -186,10 +186,10 @@ function signup() {
 			success: function(data, textString, xhr) {
 				if (data.status == "success") {
 					//localStorage should be changed to nativeStorage plugin
-					localStorage.login = "true";
-					localStorage.email = email;
-					localStorage.id = data.id;
-					localStorage.firstLogin = "true";
+					window.localStorage.setItem("login", true);
+					window.localStorage.setItem("email", email);
+					window.localStorage.setItem("id", data.id);
+					window.localStorage.firstLogin = "true";
 					console.log("redirecting...");
 					mainView.router.loadPage("swipe.html");
 				} else if (data.status == 'exist') {
@@ -220,12 +220,12 @@ function signup() {
 function verifyUser() {
 
 	//create data array
-	var dataString = {"action": "verify", "userID": localStorage.id};
+	var dataString = {"action": "verify", "userID": window.localStorage.getItem("id")};
 
 	console.log(dataString);
 
 	//if form isnt empty, post ajax request to server
-	if ($.trim(localStorage.id).length > 0) {
+	if ($.trim(window.localStorage.getItem("id")).length > 0) {
 
 		console.log("input checked");
 
@@ -234,8 +234,8 @@ function verifyUser() {
 		//ajax post
 		$.ajax({
 			type: "POST",
-			url: server + "/login.php",
-			data: dataString,
+			url: server + "login/verify/",
+			data: JSON.stringify(dataString),
 			dataType: 'json',
 			crossDomain: true,
 			cache: false,
@@ -297,8 +297,8 @@ function recover() {
 		//ajax post
 		$.ajax({
 			type: "POST",
-			url: server + "/login.php",
-			data: dataString,
+			url: server + "login/recover/",
+			data: JSON.stringify(dataString),
 			dataType: 'json',
 			crossDomain: true,
 			cache: false,

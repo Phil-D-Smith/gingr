@@ -5,11 +5,28 @@
 //var $$ = Dom7;
 
 //interval for checking messages
-var checkInterval = 3000;
+var checkInterval = 10000;
 var currentPage = 0;
 
 //handle Cordova device ready event
 $$(document).on('deviceready', function() {
+
+	//establish websocket connection
+	var userID = window.localStorage.getItem("id");
+	try {
+		console.log("opening socket connection");
+    	ws = new WebSocket("ws://192.168.1.140:8000/?" + userID);
+    	// attach callbacks
+    	ws.onopen = onSocketOpen;
+    	ws.onclose = onSocketClose;
+    	ws.onmessage = onSocketMessage;
+    	ws.onerror = onSocketError;
+    }
+    catch(err) {
+    	console.log("cannot open websocket, reverting to http polling")
+    }
+
+
 
 	//wait for matches page to be fully loaded
 	myApp.onPageInit('matches', function(page) {
@@ -26,8 +43,8 @@ $$(document).on('deviceready', function() {
 			var matchID = $(this).data("match-id");
 			var matchName = $(this).data("first-name");
 			//store match ID locally to load correct messages in next page
-			localStorage.matchID = matchID;
-			localStorage.matchName = matchName;
+			window.localStorage.setItem("matchID", matchID);
+			window.localStorage.setItem("matchID", matchName);
 
 			mainView.router.loadPage("conversation.html");
 		}); 
@@ -38,9 +55,9 @@ $$(document).on('deviceready', function() {
 		console.log("conversation init");
 		currentPage = "conversation";
 		//get match ID passed through browser storage
-		var matchID = localStorage.matchID;
-		var matchName = localStorage.matchName;
-		var userID = localStorage.id;
+		var matchID = window.localStorage.getItem("matchID");
+		var matchName = window.localStorage.getItem("matchName");
+		var userID = window.localStorage.getItem("id");
 		//get all messages for that match
 		getMessages(matchID, matchName, userID);
 
@@ -48,8 +65,8 @@ $$(document).on('deviceready', function() {
 		$("#link").on('touchend', function(e) {
 			e.preventDefault();
 			//get match ID passed through browser storage
-			var matchID = localStorage.matchID;
-			var userID = localStorage.id;
+			var matchID = window.localStorage.getItem("matchID");
+			var userID = window.localStorage.getItem("id");
 			//send message from userID
 			sendMessage(matchID, userID);
 
@@ -61,17 +78,151 @@ $$(document).on('deviceready', function() {
 	});
 
 	//some mad ajax polling to periodically check messages - vary by inactivity
-	setInterval(checkMessages, checkInterval);
+	//setInterval(checkMessages, checkInterval);
 	//define inactivity as - no messages sent/recieved for set time / conversation not open / not on app
 
 });
+
+
+//websocket callbacks
+
+//check for new messages missed
+function onSocketOpen() {
+	return 0;
+}
+
+//not sure
+function onSocketClose() {
+	return 0;
+}
+
+//if on message page: load the message immediately and store in db, else: store in db
+function onSocketMessage(message) {
+	//if the conversation page is loaded
+
+
+	if (currentPage == "conversation") {
+		matchID = window.localStorage.getItem("matchID");
+		//then load the new messages for that match
+
+		//get into local variables for readability
+		var dateTime = data.messages[matchID][i]["dateTime"];
+		var messageNumber = data.messages[matchID][i]["messageNumber"];
+		var messageBody = data.messages[matchID][i]["messageBody"];
+		var senderID = data.messages[matchID][i]["senderID"];
+		//conver to js date object
+		var dateObj = new Date(dateTime);
+		var minutes = ('0' + dateObj.getMinutes()).slice(-2);
+		var hours = ('0' + dateObj.getHours()).slice(-2);
+		var day = ('0' + dateObj.getDate()).slice(-2);
+		var month = ('0' + (dateObj.getMonth()+1)).slice(-2);
+		var year = ('0' + dateObj.getYear()).slice(-2);
+
+		//get avatar in blob format
+		var avatar = ""; //god knows how to get photos
+		var firstName;
+		//if "from" = logged in user, message type = sent, else recieved						
+		if (senderID == window.localStorage.getItem("id")) {
+			var messageType = "sent";
+			firstName = "Me";
+		} else {
+			var messageType = "received";
+			//avatar and name for received message
+			avatar = '';
+		//firstName = matchName;
+		}
+
+		// init messages and messagebar globally
+		var	myMessages = myApp.messages('.messages', {
+			autoLayout:true
+		});
+		var	myMessagebar = myApp.messagebar('.messagebar');
+
+		//add message
+		myMessages.addMessage({
+			//message data
+			text: messageBody,
+			type: messageType,
+			avatar: avatar,
+			//name: firstName,
+			//date and time
+			//if conversation is not started: "today", else: false (no day) 
+			day: !conversationStarted ? 'Today' : false,
+			time: !conversationStarted ? hours + ':' + minutes : false
+  		})
+ 	
+		//update conversation flag
+		conversationStarted = true;
+
+	} else {
+		console.log("new message");
+	}
+}
+
+//on error callback
+function onSocketError(message) {
+	console.log("socket error");
+	console.log(message);
+}
+
+//for sending a message using websocket instead of http request
+function sendMessageWS() {
+	// new conversation flag off
+	var	conversationStarted = false;	
+	// init messages and messagebar - get content
+	var	myMessages = myApp.messages('.messages', {
+		autoLayout:true
+	});
+	var	myMessagebar = myApp.messagebar('.messagebar');
+ 	var messageText = myMessagebar.value().trim();
+	// exit if empty message
+	if (messageText.length === 0)
+		return;
+	// clear messagebar
+	myMessagebar.clear()
+
+	//post request string to server
+	var dataString = {"action": "sendMessage", "matchID": matchID, "senderID": userID, "messageBody": messageText};
+
+	//ws send message
+	ws.send(JSON.stringify(dataString));
+
+	//need to check for a response here, and increment message counter
+
+	//need a way to know if this has arrived
+	console.log("message uploaded to server")
+	var newMessageCount = window.localStorage.getItem("messageCount") + 1;
+	window.localStorage.setItem("messageCount", newMessageCount);
+
+	//name and avatar
+	var messageType = 'sent';
+
+	var avatar = '';
+	var name = 'Me';
+
+	// Add message
+	myMessages.addMessage({
+		// message data
+		text: messageText,
+		type: messageType,
+		avatar: avatar,
+		//name: name,
+		// date and time
+		day: !conversationStarted ? 'Today' : false,
+		time: !conversationStarted ? (new Date()).getHours() + ':' + (new Date()).getMinutes() : false
+  			})
+ 
+	// Update conversation flag
+	conversationStarted = true;
+}
+
 
 
 //get list of all matches for user
 function getMatches() {
 
 	//get email from local stroage
-	var userID = localStorage.id;
+	var userID = window.localStorage.getItem("id");
 	console.log(userID);
 
 	//make data string
@@ -81,7 +232,7 @@ function getMatches() {
 	//ajax post to get user id from email
 	$.ajax({
 		type: "POST",
-		url: server + "/matches.php",
+		url: server + "matches/getmatches/",
 		data: dataString,
 		dataType: 'json',
 		crossDomain: true,
@@ -188,7 +339,7 @@ function sendMessage(matchID, userID) {
 		success: function(data, textString, xhr) {
 			if (data.status == "success") {
 				console.log("message uploaded to server")
-				localStorage.messageCount = data.messageCount;
+				window.localStorage.setItem("messageCount", data.messageCount);
 
 
 			} else if (data.status =="empty") {
@@ -292,7 +443,7 @@ function getMessages(matchID, matchName, userID) {
 					var firstName;
 					//if "from" = logged in user, message type = sent, else recieved
 					
-					if (senderID == localStorage.id) {
+					if (senderID == window.localStorage.getItem("id")) {
 						var messageType = "sent";
 						firstName = "Me";
 					} else {
@@ -348,11 +499,11 @@ function getMessages(matchID, matchName, userID) {
 
 //get message string from db for target
 function checkMessages() {
-	var originUserID = localStorage.id;
+	var originUserID = window.localStorage.getItem("id");
 	var	conversationStarted = false;	
 
 	//make data string
-	var dataString = {"action": "checkMessages", "originID": originUserID, "currentPage": currentPage, "matchID": localStorage.matchID};
+	var dataString = {"action": "checkMessages", "originID": originUserID, "currentPage": currentPage, "matchID": window.localStorage.getItem("matchID")};
 	console.log(dataString);
 
 	//ajax post to get user id from email
@@ -377,7 +528,7 @@ function checkMessages() {
 						console.log(data.newMessages + " new message threads avaliable");
 						//if the conversation page is loaded
 						if (currentPage == "conversation") {
-							matchID = localStorage.matchID;
+							matchID = window.localStorage.getItem("matchID");
 							//then load the new messages for that match
 							for (i = 0; i < (data.messages[matchID][0]["currentMessageCount"] - data.messages[matchID][0]["lastMessageCount"]); i++) {
 								console.log("sorting out new message");
@@ -398,7 +549,7 @@ function checkMessages() {
 								var avatar = ""; //god knows how to get photos
 								var firstName;
 								//if "from" = logged in user, message type = sent, else recieved						
-								if (senderID == localStorage.id) {
+								if (senderID == window.localStorage.getItem("id")) {
 									var messageType = "sent";
 									firstName = "Me";
 								} else {

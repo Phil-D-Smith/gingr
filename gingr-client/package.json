@@ -1,30 +1,32 @@
 {
-    "name": "com.gingrdating",
-    "version": "1.0.0",
-    "displayName": "Gingr",
-    "cordova": {
-        "platforms": [
-            "android"
-        ],
-        "plugins": {
-            "cordova-plugin-camera": {},
-            "cordova-plugin-compat": {},
-            "cordova-plugin-console": {},
-            "cordova-plugin-geolocation": {},
-            "cordova-plugin-statusbar": {},
-            "cordova-plugin-whitelist": {},
-            "phonegap-plugin-push": {}
-        }
-    },
-    "dependencies": {
-        "cordova-android": "~6.2.3",
-        "cordova-ios": "^4.4.0",
-        "cordova-plugin-camera": "~2.4.1",
-        "cordova-plugin-compat": "~1.1.0",
-        "cordova-plugin-console": "~1.0.1",
-        "cordova-plugin-geolocation": "~2.4.3",
-        "cordova-plugin-statusbar": "~1.0.1",
-        "cordova-plugin-whitelist": "~1.2.0",
-        "phonegap-plugin-push": "~2.0.0"
+  "name": "com.gingrdating",
+  "version": "1.0.0",
+  "displayName": "Gingr",
+  "cordova": {
+    "platforms": [
+      "android",
+      "browser"
+    ],
+    "plugins": {
+      "cordova-plugin-camera": {},
+      "cordova-plugin-compat": {},
+      "cordova-plugin-console": {},
+      "cordova-plugin-geolocation": {},
+      "cordova-plugin-statusbar": {},
+      "cordova-plugin-whitelist": {},
+      "phonegap-plugin-push": {}
     }
+  },
+  "dependencies": {
+    "cordova-android": "~6.2.3",
+    "cordova-browser": "^5.0.1",
+    "cordova-ios": "^4.4.0",
+    "cordova-plugin-camera": "~2.4.1",
+    "cordova-plugin-compat": "~1.1.0",
+    "cordova-plugin-console": "~1.0.1",
+    "cordova-plugin-geolocation": "~2.4.3",
+    "cordova-plugin-statusbar": "~1.0.1",
+    "cordova-plugin-whitelist": "~1.2.0",
+    "phonegap-plugin-push": "~2.0.0"
+  }
 }

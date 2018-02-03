@@ -13,9 +13,11 @@ $$(document).on('deviceready', function() {
 	myApp.onPageInit('swipe', function(page) {
 		console.log("swipe init");
 		currentPage = "matches";
-		matchCheck = setInterval(getUsers, matchInterval);
+		//matchCheck = setInterval(getUsers, matchInterval);
 		//get all matches - clear and reload periodically
-		localStorage.offset = 0;
+		localStorage.setItem("offset", 0);
+		//update location and store locally
+		updateLocation();
 		getUsers();
 
 		console.log("all users loaded");
@@ -27,7 +29,7 @@ $$(document).on('deviceready', function() {
 			//get user ID from html element after templated
 			var targetID = $(this).data("user-id");
 			//store user ID locally to load correct messages in next page
-			localStorage.targetID = targetID;
+			window.localStorage.setItem("targetID", targetID);
 			console.log(targetID);
 			//route to their profile page to view photos and bio, with YES/NO options.
 			mainView.router.loadPage("targetProfile.html");
@@ -51,7 +53,7 @@ $$(document).on('deviceready', function() {
 	//when profile page loaded, populate page and listen for decision
 	myApp.onPageInit('targetProfile', function(page) {
 		currentPage = "targetProfile";
-		loadTargetProfile(localStorage.targetID);
+		loadTargetProfile(window.localStorage.getItem("targetID"));
 
 		//on touch of tick
 		$(document).on("touchend", "#prof-decision-yes", function(e) {
@@ -74,20 +76,24 @@ $$(document).on('deviceready', function() {
 //get list of all matches for user - loads only first photo
 function getUsers() {
 
-	//get own user id from local stroage
+	//get own user id and location from local stroage
 	var loadLimit = 24;
-	var userID = localStorage.id;
+	var userID = window.localStorage.getItem("id");
+	var latitude = window.localStorage.getItem("latitude")
+	var longitude = window.localStorage.getItem("longitude")
 	console.log(userID);
 
 	//make data string
-	var dataString = {"action": "getUsers", "id": userID, "limit": loadLimit, "offset": localStorage.offset};
+	var dataString = {	"action": "getUsers", "id": userID,
+						"limit": loadLimit, "offset": window.localStorage.getItem("offset"),
+						"latitude": latitude, "longitude": longitude};
 	console.log(dataString);
 
 	//ajax post to get user id from email
 	$.ajax({
 		type: "POST",
-		url: server + "/matches.php",
-		data: dataString,
+		url: server + "matches/getusers/",
+		data: JSON.stringify(dataString),
 		dataType: 'json',
 		crossDomain: true,
 		cache: false,
@@ -100,7 +106,7 @@ function getUsers() {
 		success: function(data, textString, xhr) {
 			if (data.status == "success" && data.numUsers > 0) {
 				//change offset for next load
-				localStorage.offset = parseInt(localStorage.offset) + data.nextOffset;
+				window.localStorage.setItem("offset", parseInt(window.localStorage.getItem("offset")) + data.nextOffset);
 				//clear the invisible cards
 				$(".invisible").remove();
 				//loop through matched user data and populate list
@@ -149,9 +155,15 @@ function getUsers() {
 				$(".card-container").append($blankItems);
 
 			} else if (data.status == "success" && data.numUsers == 0) {
-				//do not chang offset - for testing
-				localStorage.offset = parseInt(localStorage.offset);
-			} else if (data.status == "error") {
+				//do not change offset - for testing
+				window.localStorage.setItem("offset", parseInt(window.localStorage.getItem("offset")));
+
+			} else if (data.status == "no-location") {
+				//error message
+				myApp.alert("Check your location settings", "No Location");
+				//retry getting location
+
+			} else {
 				myApp.alert("Unknown error 01, please try again", "Action Failed");
 			}
 		},
@@ -175,7 +187,7 @@ function getUsers() {
 //get all profile info and photos for user clicked on
 function loadTargetProfile(targetID) {
 	//get id stored locally
-	var userID = localStorage.id;
+	var userID = localStorage.getItem("id");
 
 	//make data string - could send current lat/long here?
 	var dataString = {"action": "loadTargetProfile", "id": userID, "targetID": targetID};
@@ -184,8 +196,8 @@ function loadTargetProfile(targetID) {
 	//ajax post to get profile data
 	$.ajax({
 		type: "POST",
-		url: server + "/matches.php",
-		data: dataString,
+		url: server + "matches/loadprofile/",
+		data: JSON.stringify(dataString),
 		dataType: 'json',
 		crossDomain: true,
 		cache: false,
@@ -252,7 +264,7 @@ function loadTargetProfile(targetID) {
 //submit decision on user to database and remove card from swipe page (or go back)
 function submitDecision(targetID, decision) {
 	//get from local storage
-	var originID = localStorage.id;
+	var originID = window.localStorage.getItem("id");
 
 	//make data string - could send current lat/long here?
 	var dataString = {"action": "submitDecision", "originID": originID, "targetID": targetID, "decision": decision};
@@ -261,8 +273,8 @@ function submitDecision(targetID, decision) {
 	//ajax post to get user id from email
 	$.ajax({
 		type: "POST",
-		url: server + "/matches.php",
-		data: dataString,
+		url: server + "matches/decision/",
+		data: JSON.stringify(dataString),
 		dataType: 'json',
 		crossDomain: true,
 		cache: false,
