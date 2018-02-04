@@ -1,12 +1,13 @@
 // Initialize app
 var myApp = new Framework7({
-     template7Pages: true
+    template7Pages: true,
 });
 
 // If we need to use custom DOM library, let's save it to $$ variable:
 var $$ = Dom7;
 
-var server = "http://192.168.1.140:8000/gingr_server/";
+var server = "http://127.0.0.1:8000/gingr_server/";
+var wsServer = "ws://127.0.0.1:8000/";
 var currentPage = null;
 
 // Add view

@@ -109,7 +109,8 @@ function login() {
 					window.localStorage.setItem("login", true);
 					window.localStorage.setItem("email", email);
 					window.localStorage.setItem("id", data.id);
-					mainView.router.loadPage("swipe.html");
+					//mainView.router.loadPage("swipe.html");
+					mainView.router.loadPage("dob.html");
 				} else {
 					myApp.alert("Incorrect email or password", "Login Failed");
 				}
@@ -191,7 +192,8 @@ function signup() {
 					window.localStorage.setItem("id", data.id);
 					window.localStorage.firstLogin = "true";
 					console.log("redirecting...");
-					mainView.router.loadPage("swipe.html");
+					//mainView.router.loadPage("swipe.html");
+					mainView.router.loadPage("dob.html");
 				} else if (data.status == 'exist') {
 					myApp.alert("Account already exists", "Login Failed");
 				}

@@ -34,6 +34,13 @@ $$(document).on('deviceready', function() {
 		loadProfile(userID);
 	});
 
+	//wait for matches page to be fully loaded
+	myApp.onPageInit('dob', function(page) {
+		console.log("dob init");
+		//get all matches (and new messages etc)
+		setDOB();
+	});
+
 });
 
 //logout and clear session data from storage
@@ -193,4 +200,57 @@ function getSettings(userID) {
 //store new radio inputs in database when page is closed
 function setSettings(userID) {
 
+}
+
+function setDOB() {
+	var pickerCustomToolbar = myApp.picker.create({
+		inputEl: '#demo-picker-custom-toolbar',
+  		rotateEffect: true,
+  		renderToolbar: function () {
+    		return '<div class="toolbar">' +
+      			'<div class="toolbar-inner">' +
+        			'<div class="left">' +
+        				'<a href="#" class="link toolbar-randomize-link"></a>' +
+        			'</div>' +
+        			'<div class="right">' +
+          				'<a href="#" class="link sheet-close popover-close">Next</a>' +
+        			'</div>' +
+      			'</div>' +
+    		'</div>';
+  		},
+  		cols: [
+    		{
+      			values: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
+    		},
+    		{
+      			textAlign: 'left',
+      			values: ('January February March April May June July August September October November December').split(' ')
+    		},
+    		{
+      			values: (function () {
+        			var arr = [];
+        			for (var i = 1950; i <= 2030; i++) { arr.push(i); }
+          				return arr;
+      			})(),
+    		},
+  		],
+  		on: {
+    		open: function (picker) {
+    			return 0;
+    			/*
+      			picker.$el.find('.toolbar-randomize-link').on('click', function () {
+        			var col0Values = picker.cols[0].values;
+        			var col0Random = col0Values[Math.floor(Math.random() * col0Values.length)];
+
+        			var col1Values = picker.cols[1].values;
+        			var col1Random = col1Values[Math.floor(Math.random() * col1Values.length)];
+
+        			var col2Values = picker.cols[2].values;
+        			var col2Random = col2Values[Math.floor(Math.random() * col2Values.length)];
+
+        			picker.setValue([col0Random, col1Random, col2Random]);
+      			});*/
+    		},
+  		}
+	});
 }

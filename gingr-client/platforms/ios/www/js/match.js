@@ -18,6 +18,10 @@ $$(document).on('deviceready', function() {
 		localStorage.setItem("offset", 0);
 		//update location and store locally
 		updateLocation();
+		// REMOVE THIS - FORCED TO ZERO FOR TESTING IN CHROME #################################################
+		window.localStorage.setItem("latitude", 0);
+    	window.localStorage.setItem("longitude", 0);
+    	// REMOVE THIS ########################################################################################
 		getUsers();
 
 		console.log("all users loaded");

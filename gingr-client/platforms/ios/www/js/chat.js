@@ -15,7 +15,7 @@ $$(document).on('deviceready', function() {
 	var userID = window.localStorage.getItem("id");
 	try {
 		console.log("opening socket connection");
-    	ws = new WebSocket("ws://192.168.1.140:8000/?" + userID);
+    	ws = new WebSocket(wsServer + "?" + userID);
     	// attach callbacks
     	ws.onopen = onSocketOpen;
     	ws.onclose = onSocketClose;
@@ -23,7 +23,7 @@ $$(document).on('deviceready', function() {
     	ws.onerror = onSocketError;
     }
     catch(err) {
-    	console.log("cannot open websocket, reverting to http polling")
+    	console.log("cannot open websocket, reverting to http polling (maybe)")
     }
 
 
@@ -156,6 +156,7 @@ function onSocketMessage(message) {
 
 	} else {
 		console.log("new message");
+		//notification too would be good
 	}
 }
 
