@@ -203,9 +203,10 @@ function setSettings(userID) {
 }
 
 function setDOB() {
-	var pickerCustomToolbar = myApp.picker.create({
-		inputEl: '#demo-picker-custom-toolbar',
+	var pickerCustomToolbar = myApp.picker({
+		input: '#dob-picker',
   		rotateEffect: true,
+  		closeByOutsideClick: false,
   		renderToolbar: function () {
     		return '<div class="toolbar">' +
       			'<div class="toolbar-inner">' +
@@ -229,7 +230,7 @@ function setDOB() {
     		{
       			values: (function () {
         			var arr = [];
-        			for (var i = 1950; i <= 2030; i++) { arr.push(i); }
+        			for (var i = 1900; i <= 2030; i++) { arr.push(i); }
           				return arr;
       			})(),
     		},
@@ -237,20 +238,8 @@ function setDOB() {
   		on: {
     		open: function (picker) {
     			return 0;
-    			/*
-      			picker.$el.find('.toolbar-randomize-link').on('click', function () {
-        			var col0Values = picker.cols[0].values;
-        			var col0Random = col0Values[Math.floor(Math.random() * col0Values.length)];
-
-        			var col1Values = picker.cols[1].values;
-        			var col1Random = col1Values[Math.floor(Math.random() * col1Values.length)];
-
-        			var col2Values = picker.cols[2].values;
-        			var col2Random = col2Values[Math.floor(Math.random() * col2Values.length)];
-
-        			picker.setValue([col0Random, col1Random, col2Random]);
-      			});*/
     		},
   		}
 	});
+	pickerCustomToolbar.open(); // open Picker
 }
