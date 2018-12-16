@@ -34,11 +34,15 @@ $$(document).on('deviceready', function() {
 		loadProfile(userID);
 	});
 
-	//wait for matches page to be fully loaded
+	//wait for dob page to be fully loaded
 	myApp.onPageInit('dob', function(page) {
 		console.log("dob init");
-		//get all matches (and new messages etc)
+		//load DOB wheels on screen
 		setDOB();
+		//when next is pressed, send DOB to server
+		$("#signup").on("touchend", function (e) {
+			e.preventDefault();
+			});
 	});
 
 });

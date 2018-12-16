@@ -53,13 +53,8 @@ matches/messaging screen {
 		highlight when new messages
 		thumbnail photo
 	}
-	process {
-		ajax poll server for new messages continuously - reducing in frequency
-		background process
-
 
 	}
-	messaging - ajax polling, increasing time with inactivity
 	addslashes, stripslashes instead of realescape string
 	notifications
 	ratchet/sockets?
